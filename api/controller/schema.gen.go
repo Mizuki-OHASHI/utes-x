@@ -8,16 +8,98 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gin-gonic/gin"
+	"github.com/oapi-codegen/runtime"
 )
+
+// Post defines model for Post.
+type Post struct {
+	Content   *string    `json:"content,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	Id        *string    `json:"id,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UserId    *string    `json:"user_id,omitempty"`
+}
+
+// PostCreate defines model for PostCreate.
+type PostCreate struct {
+	Content string `json:"content"`
+	UserId  string `json:"user_id"`
+}
+
+// PostWithReposts defines model for PostWithReposts.
+type PostWithReposts struct {
+	Post    *Post     `json:"post,omitempty"`
+	Reposts *[]Repost `json:"reposts,omitempty"`
+}
+
+// Repost defines model for Repost.
+type Repost struct {
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	Id        *string    `json:"id,omitempty"`
+	PostId    *string    `json:"post_id,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UserId    *string    `json:"user_id,omitempty"`
+}
+
+// RepostCreate defines model for RepostCreate.
+type RepostCreate struct {
+	Content string `json:"content"`
+	PostId  string `json:"post_id"`
+	UserId  string `json:"user_id"`
+}
+
+// User defines model for User.
+type User struct {
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	Email     *string    `json:"email,omitempty"`
+	Id        *string    `json:"id,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	Username  *string    `json:"username,omitempty"`
+}
+
+// UserCreate defines model for UserCreate.
+type UserCreate struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+// PostPostsJSONRequestBody defines body for PostPosts for application/json ContentType.
+type PostPostsJSONRequestBody = PostCreate
+
+// PostRepostsJSONRequestBody defines body for PostReposts for application/json ContentType.
+type PostRepostsJSONRequestBody = RepostCreate
+
+// PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
+type PostUsersJSONRequestBody = UserCreate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Create a post
+	// (POST /posts)
+	PostPosts(c *gin.Context)
+	// Get a post by ID (include reposts)
+	// (GET /posts/{post_id})
+	GetPostsPostId(c *gin.Context, postId string)
+	// Create a repost
+	// (POST /reposts)
+	PostReposts(c *gin.Context)
+	// Get all users
+	// (GET /users)
+	GetUsers(c *gin.Context)
+	// Create a user
+	// (POST /users)
+	PostUsers(c *gin.Context)
+	// Get all posts for a user
+	// (GET /users/{user_id}/posts)
+	GetUsersUserIdPosts(c *gin.Context, userId string)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -28,6 +110,106 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// PostPosts operation middleware
+func (siw *ServerInterfaceWrapper) PostPosts(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostPosts(c)
+}
+
+// GetPostsPostId operation middleware
+func (siw *ServerInterfaceWrapper) GetPostsPostId(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "post_id" -------------
+	var postId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", c.Param("post_id"), &postId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter post_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetPostsPostId(c, postId)
+}
+
+// PostReposts operation middleware
+func (siw *ServerInterfaceWrapper) PostReposts(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostReposts(c)
+}
+
+// GetUsers operation middleware
+func (siw *ServerInterfaceWrapper) GetUsers(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetUsers(c)
+}
+
+// PostUsers operation middleware
+func (siw *ServerInterfaceWrapper) PostUsers(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostUsers(c)
+}
+
+// GetUsersUserIdPosts operation middleware
+func (siw *ServerInterfaceWrapper) GetUsersUserIdPosts(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "user_id" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", c.Param("user_id"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter user_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetUsersUserIdPosts(c, userId)
+}
 
 // GinServerOptions provides options for the Gin server.
 type GinServerOptions struct {
@@ -43,13 +225,44 @@ func RegisterHandlers(router gin.IRouter, si ServerInterface) {
 
 // RegisterHandlersWithOptions creates http.Handler with additional options
 func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options GinServerOptions) {
+	errorHandler := options.ErrorHandler
+	if errorHandler == nil {
+		errorHandler = func(c *gin.Context, err error, statusCode int) {
+			c.JSON(statusCode, gin.H{"msg": err.Error()})
+		}
+	}
 
+	wrapper := ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.Middlewares,
+		ErrorHandler:       errorHandler,
+	}
+
+	router.POST(options.BaseURL+"/posts", wrapper.PostPosts)
+	router.GET(options.BaseURL+"/posts/:post_id", wrapper.GetPostsPostId)
+	router.POST(options.BaseURL+"/reposts", wrapper.PostReposts)
+	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
+	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
+	router.GET(options.BaseURL+"/users/:user_id/posts", wrapper.GetUsersUserIdPosts)
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/6pWysxLy1eyyivNydFRyi9IzUssyFSyUlLSUSpILMkohsjUAgIAAP//GEmFXicAAAA=",
+	"H4sIAAAAAAAC/8RW32vbOhT+V8y596EX3Di97UPwW+8dlMBgoVA2GKGo9kmjYkuaJHeE4P99HEmOndj5",
+	"0S3rXlJX0vn1fZ/O0RoyWSopUFgD6RpMtsSSuc+ZNJb+Ki0VasvRrWZSWBRuw64UQgrGai6eoY4h08gs",
+	"5o/MbS+kLukLcmbx0vISIe7b8HzQVaXyN7uqDOrHQX/15rR8esHM0mkq73+X8NuKPBhF47eKa8wh/bo5",
+	"GG/czfek8Znb5T0qaTwH27moQMPfGheQwl9JS1gS2EocVS78xgm3WJpjdj4otPAwrdlqGK9wto/V+Uin",
+	"AI9/TBC+wJ+RxMG83y6Xxt1h4TwY1OdhA0vGi8Hkz8yFYCWeSAZVt4+K/fkeDrKLtjvZlN+HmEy4WEhy",
+	"lqPJNFeWSwEp3M6m0ULqiJyYOHJ3Lo6YyKPmAsZguS3I24NFc/klup1NIYZX1Ma7uBqNR2NKWSoUTHFI",
+	"4Xo0Hl0T/cwuXZ1J2xHCzSMUGCUxzSF1rWMWwlFtaOx/Ml/tqJUpVfDMWSUvhoI3Xf6UrhI4qLfxs7pC",
+	"t2CUFMaz8u/46qyRfcxt4Gk9ChJ3lJqqLJleQQo+0Yg5Ngh/9myIaI/hnA57PJN1uF81ZfGMA8DeoceV",
+	"fqbuRjLNSrSoyeUaOOVCNEEMXm6dO7uNUtypeFeR8x6C47Mi2B0r+8BcyErk0cV3bpeNeP8hWd6Mb/q6",
+	"dxZCBqsdAu7QBvSjp1U0/RBdcJEVVY6t32FWOkNrv87vNxfrdyh9q/W/s9abGdwnyO8c07uHr4Ntg6dH",
+	"1/WoQ0p/cAd+UYonvTbcxOq/NXp1f+TGRnLh2+uQyooi7LVF+//nYRgPa6it9PwK6syrd9aPR7WPIq0f",
+	"0w6hNgDiRjfJOrxK6nYWHdQR/UzzZigdb5vto+f92uZJWp0Nv4v3atXB4x4FAdVh2faODbREMkT92qBW",
+	"6QJSWFqr0iQpZMaKpTQ2nUwmEyAsgv1ur/7U8GMi9iQru7kxHeQN1PFRu6bvdgbdSXbtUyhYNgv1vP4R",
+	"AAD//8Njoxp2DgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
