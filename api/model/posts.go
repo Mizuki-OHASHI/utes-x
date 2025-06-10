@@ -10,7 +10,7 @@ type Post struct {
 	UpdatedAt *time.Time
 }
 
-type PostWithReposts struct {
+type PostWithReplies struct {
 	Post
-	Reposts []Post
+	Replies []Post
 }

@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"os"
 	"time"
+	"utes-x-api/controller"
+	"utes-x-api/dao"
+	"utes-x-api/usecase"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -71,7 +74,19 @@ func connectDB() *sql.DB {
 }
 
 func registerHandlers(engine *gin.Engine, db *sql.DB) {
-	// TODO
+	// Daoの初期化
+	ud := dao.NewUserDao(db)
+	pd := dao.NewPostDao(db)
+
+	// Usecaseの初期化
+	uu := usecase.NewUserUsecase(ud)
+	up := usecase.NewPostUsecase(pd)
+
+	// Controllerの初期化
+	xc := controller.NewController(uu, up)
+
+	// ルーティングの設定
+	controller.RegisterHandlers(engine, xc)
 }
 
 func init() {

@@ -1,6 +1,8 @@
 package controller
 
-import "utes-x-api/model"
+import (
+	"utes-x-api/model"
+)
 
 func toUserResponse(user model.User) User {
 	return User{

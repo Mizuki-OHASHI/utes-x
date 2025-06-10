@@ -10,7 +10,7 @@ func toUserModel(userDto sqlboiler.User) (*model.User, error) {
 		ID:        model.MustParseID(userDto.ID),
 		Username:  userDto.Username,
 		Email:     userDto.Email,
-		CreatedAt: userDto.CreatedAt.Time,
+		CreatedAt: userDto.CreatedAt,
 		UpdatedAt: userDto.UpdatedAt.Ptr(),
 	}
 	return &user, nil

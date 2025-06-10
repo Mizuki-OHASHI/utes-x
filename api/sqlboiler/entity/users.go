@@ -27,7 +27,7 @@ type User struct {
 	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Username  string    `boil:"username" json:"username" toml:"username" yaml:"username"`
 	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
-	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -68,29 +68,29 @@ var UserWhere = struct {
 	ID        whereHelperstring
 	Username  whereHelperstring
 	Email     whereHelperstring
-	CreatedAt whereHelpernull_Time
+	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpernull_Time
 }{
 	ID:        whereHelperstring{field: "`users`.`id`"},
 	Username:  whereHelperstring{field: "`users`.`username`"},
 	Email:     whereHelperstring{field: "`users`.`email`"},
-	CreatedAt: whereHelpernull_Time{field: "`users`.`created_at`"},
+	CreatedAt: whereHelpertime_Time{field: "`users`.`created_at`"},
 	UpdatedAt: whereHelpernull_Time{field: "`users`.`updated_at`"},
 }
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
 	Posts   string
-	Reposts string
+	Replies string
 }{
 	Posts:   "Posts",
-	Reposts: "Reposts",
+	Replies: "Replies",
 }
 
 // userR is where relationships are stored.
 type userR struct {
-	Posts   PostSlice   `boil:"Posts" json:"Posts" toml:"Posts" yaml:"Posts"`
-	Reposts RepostSlice `boil:"Reposts" json:"Reposts" toml:"Reposts" yaml:"Reposts"`
+	Posts   PostSlice  `boil:"Posts" json:"Posts" toml:"Posts" yaml:"Posts"`
+	Replies ReplySlice `boil:"Replies" json:"Replies" toml:"Replies" yaml:"Replies"`
 }
 
 // NewStruct creates a new relationship struct
@@ -105,11 +105,11 @@ func (r *userR) GetPosts() PostSlice {
 	return r.Posts
 }
 
-func (r *userR) GetReposts() RepostSlice {
+func (r *userR) GetReplies() ReplySlice {
 	if r == nil {
 		return nil
 	}
-	return r.Reposts
+	return r.Replies
 }
 
 // userL is where Load methods for each relationship are stored.
@@ -117,8 +117,8 @@ type userL struct{}
 
 var (
 	userAllColumns            = []string{"id", "username", "email", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"id", "username", "email"}
-	userColumnsWithDefault    = []string{"created_at", "updated_at"}
+	userColumnsWithoutDefault = []string{"id", "username", "email", "created_at"}
+	userColumnsWithDefault    = []string{"updated_at"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )
@@ -442,18 +442,18 @@ func (o *User) Posts(mods ...qm.QueryMod) postQuery {
 	return Posts(queryMods...)
 }
 
-// Reposts retrieves all the repost's Reposts with an executor.
-func (o *User) Reposts(mods ...qm.QueryMod) repostQuery {
+// Replies retrieves all the reply's Replies with an executor.
+func (o *User) Replies(mods ...qm.QueryMod) replyQuery {
 	var queryMods []qm.QueryMod
 	if len(mods) != 0 {
 		queryMods = append(queryMods, mods...)
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("`reposts`.`user_id`=?", o.ID),
+		qm.Where("`replies`.`user_id`=?", o.ID),
 	)
 
-	return Reposts(queryMods...)
+	return Replies(queryMods...)
 }
 
 // LoadPosts allows an eager lookup of values, cached into the
@@ -569,9 +569,9 @@ func (userL) LoadPosts(ctx context.Context, e boil.ContextExecutor, singular boo
 	return nil
 }
 
-// LoadReposts allows an eager lookup of values, cached into the
+// LoadReplies allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (userL) LoadReposts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+func (userL) LoadReplies(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
 	var slice []*User
 	var object *User
 
@@ -624,8 +624,8 @@ func (userL) LoadReposts(ctx context.Context, e boil.ContextExecutor, singular b
 	}
 
 	query := NewQuery(
-		qm.From(`reposts`),
-		qm.WhereIn(`reposts.user_id in ?`, argsSlice...),
+		qm.From(`replies`),
+		qm.WhereIn(`replies.user_id in ?`, argsSlice...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -633,22 +633,22 @@ func (userL) LoadReposts(ctx context.Context, e boil.ContextExecutor, singular b
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load reposts")
+		return errors.Wrap(err, "failed to eager load replies")
 	}
 
-	var resultSlice []*Repost
+	var resultSlice []*Reply
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice reposts")
+		return errors.Wrap(err, "failed to bind eager loaded slice replies")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on reposts")
+		return errors.Wrap(err, "failed to close results in eager load on replies")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for reposts")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for replies")
 	}
 
-	if len(repostAfterSelectHooks) != 0 {
+	if len(replyAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
@@ -656,10 +656,10 @@ func (userL) LoadReposts(ctx context.Context, e boil.ContextExecutor, singular b
 		}
 	}
 	if singular {
-		object.R.Reposts = resultSlice
+		object.R.Replies = resultSlice
 		for _, foreign := range resultSlice {
 			if foreign.R == nil {
-				foreign.R = &repostR{}
+				foreign.R = &replyR{}
 			}
 			foreign.R.User = object
 		}
@@ -669,9 +669,9 @@ func (userL) LoadReposts(ctx context.Context, e boil.ContextExecutor, singular b
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
 			if local.ID == foreign.UserID {
-				local.R.Reposts = append(local.R.Reposts, foreign)
+				local.R.Replies = append(local.R.Replies, foreign)
 				if foreign.R == nil {
-					foreign.R = &repostR{}
+					foreign.R = &replyR{}
 				}
 				foreign.R.User = local
 				break
@@ -735,11 +735,11 @@ func (o *User) AddPosts(ctx context.Context, exec boil.ContextExecutor, insert b
 	return nil
 }
 
-// AddReposts adds the given related objects to the existing relationships
+// AddReplies adds the given related objects to the existing relationships
 // of the user, optionally inserting them as new records.
-// Appends related to o.R.Reposts.
+// Appends related to o.R.Replies.
 // Sets related.R.User appropriately.
-func (o *User) AddReposts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Repost) error {
+func (o *User) AddReplies(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Reply) error {
 	var err error
 	for _, rel := range related {
 		if insert {
@@ -749,9 +749,9 @@ func (o *User) AddReposts(ctx context.Context, exec boil.ContextExecutor, insert
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
-				"UPDATE `reposts` SET %s WHERE %s",
+				"UPDATE `replies` SET %s WHERE %s",
 				strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
-				strmangle.WhereClause("`", "`", 0, repostPrimaryKeyColumns),
+				strmangle.WhereClause("`", "`", 0, replyPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
 
@@ -770,15 +770,15 @@ func (o *User) AddReposts(ctx context.Context, exec boil.ContextExecutor, insert
 
 	if o.R == nil {
 		o.R = &userR{
-			Reposts: related,
+			Replies: related,
 		}
 	} else {
-		o.R.Reposts = append(o.R.Reposts, related...)
+		o.R.Replies = append(o.R.Replies, related...)
 	}
 
 	for _, rel := range related {
 		if rel.R == nil {
-			rel.R = &repostR{
+			rel.R = &replyR{
 				User: o,
 			}
 		} else {
@@ -840,8 +840,8 @@ func (o *User) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 		if queries.MustTime(o.UpdatedAt).IsZero() {
 			queries.SetScanner(&o.UpdatedAt, currTime)
@@ -1083,8 +1083,8 @@ func (o *User) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColu
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 		queries.SetScanner(&o.UpdatedAt, currTime)
 	}
@@ -1401,8 +1401,8 @@ func (o UserSlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, col
 		if !boil.TimestampsAreSkipped(ctx) {
 			currTime := time.Now().In(boil.GetLocation())
 
-			if queries.MustTime(row.CreatedAt).IsZero() {
-				queries.SetScanner(&row.CreatedAt, currTime)
+			if row.CreatedAt.IsZero() {
+				row.CreatedAt = currTime
 			}
 			if queries.MustTime(row.UpdatedAt).IsZero() {
 				queries.SetScanner(&row.UpdatedAt, currTime)
@@ -1459,8 +1459,8 @@ func (o UserSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, upd
 		if !boil.TimestampsAreSkipped(ctx) {
 			currTime := time.Now().In(boil.GetLocation())
 
-			if queries.MustTime(row.CreatedAt).IsZero() {
-				queries.SetScanner(&row.CreatedAt, currTime)
+			if row.CreatedAt.IsZero() {
+				row.CreatedAt = currTime
 			}
 			if queries.MustTime(row.UpdatedAt).IsZero() {
 				queries.SetScanner(&row.UpdatedAt, currTime)

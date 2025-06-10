@@ -5,12 +5,12 @@ package sqlboiler
 
 var TableNames = struct {
 	Posts            string
-	Reposts          string
+	Replies          string
 	SchemaMigrations string
 	Users            string
 }{
 	Posts:            "posts",
-	Reposts:          "reposts",
+	Replies:          "replies",
 	SchemaMigrations: "schema_migrations",
 	Users:            "users",
 }

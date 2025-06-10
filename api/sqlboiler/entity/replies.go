@@ -22,64 +22,71 @@ import (
 	"github.com/volatiletech/strmangle"
 )
 
-// Repost is an object representing the database table.
-type Repost struct {
+// Reply is an object representing the database table.
+type Reply struct {
 	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	UserID    string    `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
 	PostID    string    `boil:"post_id" json:"post_id" toml:"post_id" yaml:"post_id"`
-	CreatedAt null.Time `boil:"created_at" json:"created_at,omitempty" toml:"created_at" yaml:"created_at,omitempty"`
+	Content   string    `boil:"content" json:"content" toml:"content" yaml:"content"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt null.Time `boil:"updated_at" json:"updated_at,omitempty" toml:"updated_at" yaml:"updated_at,omitempty"`
 
-	R *repostR `boil:"-" json:"-" toml:"-" yaml:"-"`
-	L repostL  `boil:"-" json:"-" toml:"-" yaml:"-"`
+	R *replyR `boil:"-" json:"-" toml:"-" yaml:"-"`
+	L replyL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
-var RepostColumns = struct {
+var ReplyColumns = struct {
 	ID        string
 	UserID    string
 	PostID    string
+	Content   string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "id",
 	UserID:    "user_id",
 	PostID:    "post_id",
+	Content:   "content",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 }
 
-var RepostTableColumns = struct {
+var ReplyTableColumns = struct {
 	ID        string
 	UserID    string
 	PostID    string
+	Content   string
 	CreatedAt string
 	UpdatedAt string
 }{
-	ID:        "reposts.id",
-	UserID:    "reposts.user_id",
-	PostID:    "reposts.post_id",
-	CreatedAt: "reposts.created_at",
-	UpdatedAt: "reposts.updated_at",
+	ID:        "replies.id",
+	UserID:    "replies.user_id",
+	PostID:    "replies.post_id",
+	Content:   "replies.content",
+	CreatedAt: "replies.created_at",
+	UpdatedAt: "replies.updated_at",
 }
 
 // Generated where
 
-var RepostWhere = struct {
+var ReplyWhere = struct {
 	ID        whereHelperstring
 	UserID    whereHelperstring
 	PostID    whereHelperstring
-	CreatedAt whereHelpernull_Time
+	Content   whereHelperstring
+	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpernull_Time
 }{
-	ID:        whereHelperstring{field: "`reposts`.`id`"},
-	UserID:    whereHelperstring{field: "`reposts`.`user_id`"},
-	PostID:    whereHelperstring{field: "`reposts`.`post_id`"},
-	CreatedAt: whereHelpernull_Time{field: "`reposts`.`created_at`"},
-	UpdatedAt: whereHelpernull_Time{field: "`reposts`.`updated_at`"},
+	ID:        whereHelperstring{field: "`replies`.`id`"},
+	UserID:    whereHelperstring{field: "`replies`.`user_id`"},
+	PostID:    whereHelperstring{field: "`replies`.`post_id`"},
+	Content:   whereHelperstring{field: "`replies`.`content`"},
+	CreatedAt: whereHelpertime_Time{field: "`replies`.`created_at`"},
+	UpdatedAt: whereHelpernull_Time{field: "`replies`.`updated_at`"},
 }
 
-// RepostRels is where relationship names are stored.
-var RepostRels = struct {
+// ReplyRels is where relationship names are stored.
+var ReplyRels = struct {
 	User string
 	Post string
 }{
@@ -87,65 +94,65 @@ var RepostRels = struct {
 	Post: "Post",
 }
 
-// repostR is where relationships are stored.
-type repostR struct {
+// replyR is where relationships are stored.
+type replyR struct {
 	User *User `boil:"User" json:"User" toml:"User" yaml:"User"`
 	Post *Post `boil:"Post" json:"Post" toml:"Post" yaml:"Post"`
 }
 
 // NewStruct creates a new relationship struct
-func (*repostR) NewStruct() *repostR {
-	return &repostR{}
+func (*replyR) NewStruct() *replyR {
+	return &replyR{}
 }
 
-func (r *repostR) GetUser() *User {
+func (r *replyR) GetUser() *User {
 	if r == nil {
 		return nil
 	}
 	return r.User
 }
 
-func (r *repostR) GetPost() *Post {
+func (r *replyR) GetPost() *Post {
 	if r == nil {
 		return nil
 	}
 	return r.Post
 }
 
-// repostL is where Load methods for each relationship are stored.
-type repostL struct{}
+// replyL is where Load methods for each relationship are stored.
+type replyL struct{}
 
 var (
-	repostAllColumns            = []string{"id", "user_id", "post_id", "created_at", "updated_at"}
-	repostColumnsWithoutDefault = []string{"id", "user_id", "post_id"}
-	repostColumnsWithDefault    = []string{"created_at", "updated_at"}
-	repostPrimaryKeyColumns     = []string{"id"}
-	repostGeneratedColumns      = []string{}
+	replyAllColumns            = []string{"id", "user_id", "post_id", "content", "created_at", "updated_at"}
+	replyColumnsWithoutDefault = []string{"id", "user_id", "post_id", "content"}
+	replyColumnsWithDefault    = []string{"created_at", "updated_at"}
+	replyPrimaryKeyColumns     = []string{"id"}
+	replyGeneratedColumns      = []string{}
 )
 
 type (
-	// RepostSlice is an alias for a slice of pointers to Repost.
-	// This should almost always be used instead of []Repost.
-	RepostSlice []*Repost
-	// RepostHook is the signature for custom Repost hook methods
-	RepostHook func(context.Context, boil.ContextExecutor, *Repost) error
+	// ReplySlice is an alias for a slice of pointers to Reply.
+	// This should almost always be used instead of []Reply.
+	ReplySlice []*Reply
+	// ReplyHook is the signature for custom Reply hook methods
+	ReplyHook func(context.Context, boil.ContextExecutor, *Reply) error
 
-	repostQuery struct {
+	replyQuery struct {
 		*queries.Query
 	}
 )
 
 // Cache for insert, update and upsert
 var (
-	repostType                 = reflect.TypeOf(&Repost{})
-	repostMapping              = queries.MakeStructMapping(repostType)
-	repostPrimaryKeyMapping, _ = queries.BindMapping(repostType, repostMapping, repostPrimaryKeyColumns)
-	repostInsertCacheMut       sync.RWMutex
-	repostInsertCache          = make(map[string]insertCache)
-	repostUpdateCacheMut       sync.RWMutex
-	repostUpdateCache          = make(map[string]updateCache)
-	repostUpsertCacheMut       sync.RWMutex
-	repostUpsertCache          = make(map[string]insertCache)
+	replyType                 = reflect.TypeOf(&Reply{})
+	replyMapping              = queries.MakeStructMapping(replyType)
+	replyPrimaryKeyMapping, _ = queries.BindMapping(replyType, replyMapping, replyPrimaryKeyColumns)
+	replyInsertCacheMut       sync.RWMutex
+	replyInsertCache          = make(map[string]insertCache)
+	replyUpdateCacheMut       sync.RWMutex
+	replyUpdateCache          = make(map[string]updateCache)
+	replyUpsertCacheMut       sync.RWMutex
+	replyUpsertCache          = make(map[string]insertCache)
 )
 
 var (
@@ -156,36 +163,36 @@ var (
 	_ = qmhelper.Where
 )
 
-var repostAfterSelectMu sync.Mutex
-var repostAfterSelectHooks []RepostHook
+var replyAfterSelectMu sync.Mutex
+var replyAfterSelectHooks []ReplyHook
 
-var repostBeforeInsertMu sync.Mutex
-var repostBeforeInsertHooks []RepostHook
-var repostAfterInsertMu sync.Mutex
-var repostAfterInsertHooks []RepostHook
+var replyBeforeInsertMu sync.Mutex
+var replyBeforeInsertHooks []ReplyHook
+var replyAfterInsertMu sync.Mutex
+var replyAfterInsertHooks []ReplyHook
 
-var repostBeforeUpdateMu sync.Mutex
-var repostBeforeUpdateHooks []RepostHook
-var repostAfterUpdateMu sync.Mutex
-var repostAfterUpdateHooks []RepostHook
+var replyBeforeUpdateMu sync.Mutex
+var replyBeforeUpdateHooks []ReplyHook
+var replyAfterUpdateMu sync.Mutex
+var replyAfterUpdateHooks []ReplyHook
 
-var repostBeforeDeleteMu sync.Mutex
-var repostBeforeDeleteHooks []RepostHook
-var repostAfterDeleteMu sync.Mutex
-var repostAfterDeleteHooks []RepostHook
+var replyBeforeDeleteMu sync.Mutex
+var replyBeforeDeleteHooks []ReplyHook
+var replyAfterDeleteMu sync.Mutex
+var replyAfterDeleteHooks []ReplyHook
 
-var repostBeforeUpsertMu sync.Mutex
-var repostBeforeUpsertHooks []RepostHook
-var repostAfterUpsertMu sync.Mutex
-var repostAfterUpsertHooks []RepostHook
+var replyBeforeUpsertMu sync.Mutex
+var replyBeforeUpsertHooks []ReplyHook
+var replyAfterUpsertMu sync.Mutex
+var replyAfterUpsertHooks []ReplyHook
 
 // doAfterSelectHooks executes all "after Select" hooks.
-func (o *Repost) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostAfterSelectHooks {
+	for _, hook := range replyAfterSelectHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -195,12 +202,12 @@ func (o *Repost) doAfterSelectHooks(ctx context.Context, exec boil.ContextExecut
 }
 
 // doBeforeInsertHooks executes all "before insert" hooks.
-func (o *Repost) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostBeforeInsertHooks {
+	for _, hook := range replyBeforeInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -210,12 +217,12 @@ func (o *Repost) doBeforeInsertHooks(ctx context.Context, exec boil.ContextExecu
 }
 
 // doAfterInsertHooks executes all "after Insert" hooks.
-func (o *Repost) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostAfterInsertHooks {
+	for _, hook := range replyAfterInsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -225,12 +232,12 @@ func (o *Repost) doAfterInsertHooks(ctx context.Context, exec boil.ContextExecut
 }
 
 // doBeforeUpdateHooks executes all "before Update" hooks.
-func (o *Repost) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostBeforeUpdateHooks {
+	for _, hook := range replyBeforeUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -240,12 +247,12 @@ func (o *Repost) doBeforeUpdateHooks(ctx context.Context, exec boil.ContextExecu
 }
 
 // doAfterUpdateHooks executes all "after Update" hooks.
-func (o *Repost) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostAfterUpdateHooks {
+	for _, hook := range replyAfterUpdateHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -255,12 +262,12 @@ func (o *Repost) doAfterUpdateHooks(ctx context.Context, exec boil.ContextExecut
 }
 
 // doBeforeDeleteHooks executes all "before Delete" hooks.
-func (o *Repost) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostBeforeDeleteHooks {
+	for _, hook := range replyBeforeDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -270,12 +277,12 @@ func (o *Repost) doBeforeDeleteHooks(ctx context.Context, exec boil.ContextExecu
 }
 
 // doAfterDeleteHooks executes all "after Delete" hooks.
-func (o *Repost) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostAfterDeleteHooks {
+	for _, hook := range replyAfterDeleteHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -285,12 +292,12 @@ func (o *Repost) doAfterDeleteHooks(ctx context.Context, exec boil.ContextExecut
 }
 
 // doBeforeUpsertHooks executes all "before Upsert" hooks.
-func (o *Repost) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostBeforeUpsertHooks {
+	for _, hook := range replyBeforeUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -300,12 +307,12 @@ func (o *Repost) doBeforeUpsertHooks(ctx context.Context, exec boil.ContextExecu
 }
 
 // doAfterUpsertHooks executes all "after Upsert" hooks.
-func (o *Repost) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
+func (o *Reply) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecutor) (err error) {
 	if boil.HooksAreSkipped(ctx) {
 		return nil
 	}
 
-	for _, hook := range repostAfterUpsertHooks {
+	for _, hook := range replyAfterUpsertHooks {
 		if err := hook(ctx, exec, o); err != nil {
 			return err
 		}
@@ -314,51 +321,51 @@ func (o *Repost) doAfterUpsertHooks(ctx context.Context, exec boil.ContextExecut
 	return nil
 }
 
-// AddRepostHook registers your hook function for all future operations.
-func AddRepostHook(hookPoint boil.HookPoint, repostHook RepostHook) {
+// AddReplyHook registers your hook function for all future operations.
+func AddReplyHook(hookPoint boil.HookPoint, replyHook ReplyHook) {
 	switch hookPoint {
 	case boil.AfterSelectHook:
-		repostAfterSelectMu.Lock()
-		repostAfterSelectHooks = append(repostAfterSelectHooks, repostHook)
-		repostAfterSelectMu.Unlock()
+		replyAfterSelectMu.Lock()
+		replyAfterSelectHooks = append(replyAfterSelectHooks, replyHook)
+		replyAfterSelectMu.Unlock()
 	case boil.BeforeInsertHook:
-		repostBeforeInsertMu.Lock()
-		repostBeforeInsertHooks = append(repostBeforeInsertHooks, repostHook)
-		repostBeforeInsertMu.Unlock()
+		replyBeforeInsertMu.Lock()
+		replyBeforeInsertHooks = append(replyBeforeInsertHooks, replyHook)
+		replyBeforeInsertMu.Unlock()
 	case boil.AfterInsertHook:
-		repostAfterInsertMu.Lock()
-		repostAfterInsertHooks = append(repostAfterInsertHooks, repostHook)
-		repostAfterInsertMu.Unlock()
+		replyAfterInsertMu.Lock()
+		replyAfterInsertHooks = append(replyAfterInsertHooks, replyHook)
+		replyAfterInsertMu.Unlock()
 	case boil.BeforeUpdateHook:
-		repostBeforeUpdateMu.Lock()
-		repostBeforeUpdateHooks = append(repostBeforeUpdateHooks, repostHook)
-		repostBeforeUpdateMu.Unlock()
+		replyBeforeUpdateMu.Lock()
+		replyBeforeUpdateHooks = append(replyBeforeUpdateHooks, replyHook)
+		replyBeforeUpdateMu.Unlock()
 	case boil.AfterUpdateHook:
-		repostAfterUpdateMu.Lock()
-		repostAfterUpdateHooks = append(repostAfterUpdateHooks, repostHook)
-		repostAfterUpdateMu.Unlock()
+		replyAfterUpdateMu.Lock()
+		replyAfterUpdateHooks = append(replyAfterUpdateHooks, replyHook)
+		replyAfterUpdateMu.Unlock()
 	case boil.BeforeDeleteHook:
-		repostBeforeDeleteMu.Lock()
-		repostBeforeDeleteHooks = append(repostBeforeDeleteHooks, repostHook)
-		repostBeforeDeleteMu.Unlock()
+		replyBeforeDeleteMu.Lock()
+		replyBeforeDeleteHooks = append(replyBeforeDeleteHooks, replyHook)
+		replyBeforeDeleteMu.Unlock()
 	case boil.AfterDeleteHook:
-		repostAfterDeleteMu.Lock()
-		repostAfterDeleteHooks = append(repostAfterDeleteHooks, repostHook)
-		repostAfterDeleteMu.Unlock()
+		replyAfterDeleteMu.Lock()
+		replyAfterDeleteHooks = append(replyAfterDeleteHooks, replyHook)
+		replyAfterDeleteMu.Unlock()
 	case boil.BeforeUpsertHook:
-		repostBeforeUpsertMu.Lock()
-		repostBeforeUpsertHooks = append(repostBeforeUpsertHooks, repostHook)
-		repostBeforeUpsertMu.Unlock()
+		replyBeforeUpsertMu.Lock()
+		replyBeforeUpsertHooks = append(replyBeforeUpsertHooks, replyHook)
+		replyBeforeUpsertMu.Unlock()
 	case boil.AfterUpsertHook:
-		repostAfterUpsertMu.Lock()
-		repostAfterUpsertHooks = append(repostAfterUpsertHooks, repostHook)
-		repostAfterUpsertMu.Unlock()
+		replyAfterUpsertMu.Lock()
+		replyAfterUpsertHooks = append(replyAfterUpsertHooks, replyHook)
+		replyAfterUpsertMu.Unlock()
 	}
 }
 
-// One returns a single repost record from the query.
-func (q repostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Repost, error) {
-	o := &Repost{}
+// One returns a single reply record from the query.
+func (q replyQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Reply, error) {
+	o := &Reply{}
 
 	queries.SetLimit(q.Query, 1)
 
@@ -367,7 +374,7 @@ func (q repostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Repos
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "sqlboiler: failed to execute a one query for reposts")
+		return nil, errors.Wrap(err, "sqlboiler: failed to execute a one query for replies")
 	}
 
 	if err := o.doAfterSelectHooks(ctx, exec); err != nil {
@@ -377,16 +384,16 @@ func (q repostQuery) One(ctx context.Context, exec boil.ContextExecutor) (*Repos
 	return o, nil
 }
 
-// All returns all Repost records from the query.
-func (q repostQuery) All(ctx context.Context, exec boil.ContextExecutor) (RepostSlice, error) {
-	var o []*Repost
+// All returns all Reply records from the query.
+func (q replyQuery) All(ctx context.Context, exec boil.ContextExecutor) (ReplySlice, error) {
+	var o []*Reply
 
 	err := q.Bind(ctx, exec, &o)
 	if err != nil {
-		return nil, errors.Wrap(err, "sqlboiler: failed to assign all query results to Repost slice")
+		return nil, errors.Wrap(err, "sqlboiler: failed to assign all query results to Reply slice")
 	}
 
-	if len(repostAfterSelectHooks) != 0 {
+	if len(replyAfterSelectHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doAfterSelectHooks(ctx, exec); err != nil {
 				return o, err
@@ -397,8 +404,8 @@ func (q repostQuery) All(ctx context.Context, exec boil.ContextExecutor) (Repost
 	return o, nil
 }
 
-// Count returns the count of all Repost records in the query.
-func (q repostQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+// Count returns the count of all Reply records in the query.
+func (q replyQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	var count int64
 
 	queries.SetSelect(q.Query, nil)
@@ -406,14 +413,14 @@ func (q repostQuery) Count(ctx context.Context, exec boil.ContextExecutor) (int6
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: failed to count reposts rows")
+		return 0, errors.Wrap(err, "sqlboiler: failed to count replies rows")
 	}
 
 	return count, nil
 }
 
 // Exists checks if the row exists in the table.
-func (q repostQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
+func (q replyQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
 	var count int64
 
 	queries.SetSelect(q.Query, nil)
@@ -422,14 +429,14 @@ func (q repostQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (boo
 
 	err := q.Query.QueryRowContext(ctx, exec).Scan(&count)
 	if err != nil {
-		return false, errors.Wrap(err, "sqlboiler: failed to check if reposts exists")
+		return false, errors.Wrap(err, "sqlboiler: failed to check if replies exists")
 	}
 
 	return count > 0, nil
 }
 
 // User pointed to by the foreign key.
-func (o *Repost) User(mods ...qm.QueryMod) userQuery {
+func (o *Reply) User(mods ...qm.QueryMod) userQuery {
 	queryMods := []qm.QueryMod{
 		qm.Where("`id` = ?", o.UserID),
 	}
@@ -440,7 +447,7 @@ func (o *Repost) User(mods ...qm.QueryMod) userQuery {
 }
 
 // Post pointed to by the foreign key.
-func (o *Repost) Post(mods ...qm.QueryMod) postQuery {
+func (o *Reply) Post(mods ...qm.QueryMod) postQuery {
 	queryMods := []qm.QueryMod{
 		qm.Where("`id` = ?", o.PostID),
 	}
@@ -452,28 +459,28 @@ func (o *Repost) Post(mods ...qm.QueryMod) postQuery {
 
 // LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (repostL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeRepost interface{}, mods queries.Applicator) error {
-	var slice []*Repost
-	var object *Repost
+func (replyL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybeReply interface{}, mods queries.Applicator) error {
+	var slice []*Reply
+	var object *Reply
 
 	if singular {
 		var ok bool
-		object, ok = maybeRepost.(*Repost)
+		object, ok = maybeReply.(*Reply)
 		if !ok {
-			object = new(Repost)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeRepost)
+			object = new(Reply)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeReply)
 			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeRepost))
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeReply))
 			}
 		}
 	} else {
-		s, ok := maybeRepost.(*[]*Repost)
+		s, ok := maybeReply.(*[]*Reply)
 		if ok {
 			slice = *s
 		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeRepost)
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeReply)
 			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeRepost))
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeReply))
 			}
 		}
 	}
@@ -481,14 +488,14 @@ func (repostL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bo
 	args := make(map[interface{}]struct{})
 	if singular {
 		if object.R == nil {
-			object.R = &repostR{}
+			object.R = &replyR{}
 		}
 		args[object.UserID] = struct{}{}
 
 	} else {
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &repostR{}
+				obj.R = &replyR{}
 			}
 
 			args[obj.UserID] = struct{}{}
@@ -550,7 +557,7 @@ func (repostL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bo
 		if foreign.R == nil {
 			foreign.R = &userR{}
 		}
-		foreign.R.Reposts = append(foreign.R.Reposts, object)
+		foreign.R.Replies = append(foreign.R.Replies, object)
 		return nil
 	}
 
@@ -561,7 +568,7 @@ func (repostL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bo
 				if foreign.R == nil {
 					foreign.R = &userR{}
 				}
-				foreign.R.Reposts = append(foreign.R.Reposts, local)
+				foreign.R.Replies = append(foreign.R.Replies, local)
 				break
 			}
 		}
@@ -572,28 +579,28 @@ func (repostL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bo
 
 // LoadPost allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
-func (repostL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bool, maybeRepost interface{}, mods queries.Applicator) error {
-	var slice []*Repost
-	var object *Repost
+func (replyL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bool, maybeReply interface{}, mods queries.Applicator) error {
+	var slice []*Reply
+	var object *Reply
 
 	if singular {
 		var ok bool
-		object, ok = maybeRepost.(*Repost)
+		object, ok = maybeReply.(*Reply)
 		if !ok {
-			object = new(Repost)
-			ok = queries.SetFromEmbeddedStruct(&object, &maybeRepost)
+			object = new(Reply)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeReply)
 			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeRepost))
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeReply))
 			}
 		}
 	} else {
-		s, ok := maybeRepost.(*[]*Repost)
+		s, ok := maybeReply.(*[]*Reply)
 		if ok {
 			slice = *s
 		} else {
-			ok = queries.SetFromEmbeddedStruct(&slice, maybeRepost)
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeReply)
 			if !ok {
-				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeRepost))
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeReply))
 			}
 		}
 	}
@@ -601,14 +608,14 @@ func (repostL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bo
 	args := make(map[interface{}]struct{})
 	if singular {
 		if object.R == nil {
-			object.R = &repostR{}
+			object.R = &replyR{}
 		}
 		args[object.PostID] = struct{}{}
 
 	} else {
 		for _, obj := range slice {
 			if obj.R == nil {
-				obj.R = &repostR{}
+				obj.R = &replyR{}
 			}
 
 			args[obj.PostID] = struct{}{}
@@ -670,7 +677,7 @@ func (repostL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bo
 		if foreign.R == nil {
 			foreign.R = &postR{}
 		}
-		foreign.R.Reposts = append(foreign.R.Reposts, object)
+		foreign.R.Replies = append(foreign.R.Replies, object)
 		return nil
 	}
 
@@ -681,7 +688,7 @@ func (repostL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bo
 				if foreign.R == nil {
 					foreign.R = &postR{}
 				}
-				foreign.R.Reposts = append(foreign.R.Reposts, local)
+				foreign.R.Replies = append(foreign.R.Replies, local)
 				break
 			}
 		}
@@ -690,10 +697,10 @@ func (repostL) LoadPost(ctx context.Context, e boil.ContextExecutor, singular bo
 	return nil
 }
 
-// SetUser of the repost to the related item.
+// SetUser of the reply to the related item.
 // Sets o.R.User to related.
-// Adds o to related.R.Reposts.
-func (o *Repost) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
+// Adds o to related.R.Replies.
+func (o *Reply) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bool, related *User) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -702,9 +709,9 @@ func (o *Repost) SetUser(ctx context.Context, exec boil.ContextExecutor, insert 
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE `reposts` SET %s WHERE %s",
+		"UPDATE `replies` SET %s WHERE %s",
 		strmangle.SetParamNames("`", "`", 0, []string{"user_id"}),
-		strmangle.WhereClause("`", "`", 0, repostPrimaryKeyColumns),
+		strmangle.WhereClause("`", "`", 0, replyPrimaryKeyColumns),
 	)
 	values := []interface{}{related.ID, o.ID}
 
@@ -719,7 +726,7 @@ func (o *Repost) SetUser(ctx context.Context, exec boil.ContextExecutor, insert 
 
 	o.UserID = related.ID
 	if o.R == nil {
-		o.R = &repostR{
+		o.R = &replyR{
 			User: related,
 		}
 	} else {
@@ -728,19 +735,19 @@ func (o *Repost) SetUser(ctx context.Context, exec boil.ContextExecutor, insert 
 
 	if related.R == nil {
 		related.R = &userR{
-			Reposts: RepostSlice{o},
+			Replies: ReplySlice{o},
 		}
 	} else {
-		related.R.Reposts = append(related.R.Reposts, o)
+		related.R.Replies = append(related.R.Replies, o)
 	}
 
 	return nil
 }
 
-// SetPost of the repost to the related item.
+// SetPost of the reply to the related item.
 // Sets o.R.Post to related.
-// Adds o to related.R.Reposts.
-func (o *Repost) SetPost(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Post) error {
+// Adds o to related.R.Replies.
+func (o *Reply) SetPost(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Post) error {
 	var err error
 	if insert {
 		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
@@ -749,9 +756,9 @@ func (o *Repost) SetPost(ctx context.Context, exec boil.ContextExecutor, insert 
 	}
 
 	updateQuery := fmt.Sprintf(
-		"UPDATE `reposts` SET %s WHERE %s",
+		"UPDATE `replies` SET %s WHERE %s",
 		strmangle.SetParamNames("`", "`", 0, []string{"post_id"}),
-		strmangle.WhereClause("`", "`", 0, repostPrimaryKeyColumns),
+		strmangle.WhereClause("`", "`", 0, replyPrimaryKeyColumns),
 	)
 	values := []interface{}{related.ID, o.ID}
 
@@ -766,7 +773,7 @@ func (o *Repost) SetPost(ctx context.Context, exec boil.ContextExecutor, insert 
 
 	o.PostID = related.ID
 	if o.R == nil {
-		o.R = &repostR{
+		o.R = &replyR{
 			Post: related,
 		}
 	} else {
@@ -775,69 +782,69 @@ func (o *Repost) SetPost(ctx context.Context, exec boil.ContextExecutor, insert 
 
 	if related.R == nil {
 		related.R = &postR{
-			Reposts: RepostSlice{o},
+			Replies: ReplySlice{o},
 		}
 	} else {
-		related.R.Reposts = append(related.R.Reposts, o)
+		related.R.Replies = append(related.R.Replies, o)
 	}
 
 	return nil
 }
 
-// Reposts retrieves all the records using an executor.
-func Reposts(mods ...qm.QueryMod) repostQuery {
-	mods = append(mods, qm.From("`reposts`"))
+// Replies retrieves all the records using an executor.
+func Replies(mods ...qm.QueryMod) replyQuery {
+	mods = append(mods, qm.From("`replies`"))
 	q := NewQuery(mods...)
 	if len(queries.GetSelect(q)) == 0 {
-		queries.SetSelect(q, []string{"`reposts`.*"})
+		queries.SetSelect(q, []string{"`replies`.*"})
 	}
 
-	return repostQuery{q}
+	return replyQuery{q}
 }
 
-// FindRepost retrieves a single record by ID with an executor.
+// FindReply retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindRepost(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Repost, error) {
-	repostObj := &Repost{}
+func FindReply(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Reply, error) {
+	replyObj := &Reply{}
 
 	sel := "*"
 	if len(selectCols) > 0 {
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from `reposts` where `id`=?", sel,
+		"select %s from `replies` where `id`=?", sel,
 	)
 
 	q := queries.Raw(query, iD)
 
-	err := q.Bind(ctx, exec, repostObj)
+	err := q.Bind(ctx, exec, replyObj)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, sql.ErrNoRows
 		}
-		return nil, errors.Wrap(err, "sqlboiler: unable to select from reposts")
+		return nil, errors.Wrap(err, "sqlboiler: unable to select from replies")
 	}
 
-	if err = repostObj.doAfterSelectHooks(ctx, exec); err != nil {
-		return repostObj, err
+	if err = replyObj.doAfterSelectHooks(ctx, exec); err != nil {
+		return replyObj, err
 	}
 
-	return repostObj, nil
+	return replyObj, nil
 }
 
 // Insert a single record using an executor.
 // See boil.Columns.InsertColumnSet documentation to understand column list inference for inserts.
-func (o *Repost) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
+func (o *Reply) Insert(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
 	if o == nil {
-		return errors.New("sqlboiler: no reposts provided for insertion")
+		return errors.New("sqlboiler: no replies provided for insertion")
 	}
 
 	var err error
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 		if queries.MustTime(o.UpdatedAt).IsZero() {
 			queries.SetScanner(&o.UpdatedAt, currTime)
@@ -848,39 +855,39 @@ func (o *Repost) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 		return err
 	}
 
-	nzDefaults := queries.NonZeroDefaultSet(repostColumnsWithDefault, o)
+	nzDefaults := queries.NonZeroDefaultSet(replyColumnsWithDefault, o)
 
 	key := makeCacheKey(columns, nzDefaults)
-	repostInsertCacheMut.RLock()
-	cache, cached := repostInsertCache[key]
-	repostInsertCacheMut.RUnlock()
+	replyInsertCacheMut.RLock()
+	cache, cached := replyInsertCache[key]
+	replyInsertCacheMut.RUnlock()
 
 	if !cached {
 		wl, returnColumns := columns.InsertColumnSet(
-			repostAllColumns,
-			repostColumnsWithDefault,
-			repostColumnsWithoutDefault,
+			replyAllColumns,
+			replyColumnsWithDefault,
+			replyColumnsWithoutDefault,
 			nzDefaults,
 		)
 
-		cache.valueMapping, err = queries.BindMapping(repostType, repostMapping, wl)
+		cache.valueMapping, err = queries.BindMapping(replyType, replyMapping, wl)
 		if err != nil {
 			return err
 		}
-		cache.retMapping, err = queries.BindMapping(repostType, repostMapping, returnColumns)
+		cache.retMapping, err = queries.BindMapping(replyType, replyMapping, returnColumns)
 		if err != nil {
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO `reposts` (`%s`) %%sVALUES (%s)%%s", strings.Join(wl, "`,`"), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO `replies` (`%s`) %%sVALUES (%s)%%s", strings.Join(wl, "`,`"), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO `reposts` () VALUES ()%s%s"
+			cache.query = "INSERT INTO `replies` () VALUES ()%s%s"
 		}
 
 		var queryOutput, queryReturning string
 
 		if len(cache.retMapping) != 0 {
-			cache.retQuery = fmt.Sprintf("SELECT `%s` FROM `reposts` WHERE %s", strings.Join(returnColumns, "`,`"), strmangle.WhereClause("`", "`", 0, repostPrimaryKeyColumns))
+			cache.retQuery = fmt.Sprintf("SELECT `%s` FROM `replies` WHERE %s", strings.Join(returnColumns, "`,`"), strmangle.WhereClause("`", "`", 0, replyPrimaryKeyColumns))
 		}
 
 		cache.query = fmt.Sprintf(cache.query, queryOutput, queryReturning)
@@ -897,7 +904,7 @@ func (o *Repost) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	_, err = exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to insert into reposts")
+		return errors.Wrap(err, "sqlboiler: unable to insert into replies")
 	}
 
 	var identifierCols []interface{}
@@ -917,23 +924,23 @@ func (o *Repost) Insert(ctx context.Context, exec boil.ContextExecutor, columns 
 	}
 	err = exec.QueryRowContext(ctx, cache.retQuery, identifierCols...).Scan(queries.PtrsFromMapping(value, cache.retMapping)...)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to populate default values for reposts")
+		return errors.Wrap(err, "sqlboiler: unable to populate default values for replies")
 	}
 
 CacheNoHooks:
 	if !cached {
-		repostInsertCacheMut.Lock()
-		repostInsertCache[key] = cache
-		repostInsertCacheMut.Unlock()
+		replyInsertCacheMut.Lock()
+		replyInsertCache[key] = cache
+		replyInsertCacheMut.Unlock()
 	}
 
 	return o.doAfterInsertHooks(ctx, exec)
 }
 
-// Update uses an executor to update the Repost.
+// Update uses an executor to update the Reply.
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
-func (o *Repost) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
+func (o *Reply) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
@@ -945,28 +952,28 @@ func (o *Repost) Update(ctx context.Context, exec boil.ContextExecutor, columns 
 		return 0, err
 	}
 	key := makeCacheKey(columns, nil)
-	repostUpdateCacheMut.RLock()
-	cache, cached := repostUpdateCache[key]
-	repostUpdateCacheMut.RUnlock()
+	replyUpdateCacheMut.RLock()
+	cache, cached := replyUpdateCache[key]
+	replyUpdateCacheMut.RUnlock()
 
 	if !cached {
 		wl := columns.UpdateColumnSet(
-			repostAllColumns,
-			repostPrimaryKeyColumns,
+			replyAllColumns,
+			replyPrimaryKeyColumns,
 		)
 
 		if !columns.IsWhitelist() {
 			wl = strmangle.SetComplement(wl, []string{"created_at"})
 		}
 		if len(wl) == 0 {
-			return 0, errors.New("sqlboiler: unable to update reposts, could not build whitelist")
+			return 0, errors.New("sqlboiler: unable to update replies, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE `reposts` SET %s WHERE %s",
+		cache.query = fmt.Sprintf("UPDATE `replies` SET %s WHERE %s",
 			strmangle.SetParamNames("`", "`", 0, wl),
-			strmangle.WhereClause("`", "`", 0, repostPrimaryKeyColumns),
+			strmangle.WhereClause("`", "`", 0, replyPrimaryKeyColumns),
 		)
-		cache.valueMapping, err = queries.BindMapping(repostType, repostMapping, append(wl, repostPrimaryKeyColumns...))
+		cache.valueMapping, err = queries.BindMapping(replyType, replyMapping, append(wl, replyPrimaryKeyColumns...))
 		if err != nil {
 			return 0, err
 		}
@@ -982,42 +989,42 @@ func (o *Repost) Update(ctx context.Context, exec boil.ContextExecutor, columns 
 	var result sql.Result
 	result, err = exec.ExecContext(ctx, cache.query, values...)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to update reposts row")
+		return 0, errors.Wrap(err, "sqlboiler: unable to update replies row")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by update for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by update for replies")
 	}
 
 	if !cached {
-		repostUpdateCacheMut.Lock()
-		repostUpdateCache[key] = cache
-		repostUpdateCacheMut.Unlock()
+		replyUpdateCacheMut.Lock()
+		replyUpdateCache[key] = cache
+		replyUpdateCacheMut.Unlock()
 	}
 
 	return rowsAff, o.doAfterUpdateHooks(ctx, exec)
 }
 
 // UpdateAll updates all rows with the specified column values.
-func (q repostQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
+func (q replyQuery) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	queries.SetUpdate(q.Query, cols)
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to update all for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: unable to update all for replies")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to retrieve rows affected for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: unable to retrieve rows affected for replies")
 	}
 
 	return rowsAff, nil
 }
 
 // UpdateAll updates all rows with the specified column values, using an executor.
-func (o RepostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
+func (o ReplySlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, cols M) (int64, error) {
 	ln := int64(len(o))
 	if ln == 0 {
 		return 0, nil
@@ -1039,13 +1046,13 @@ func (o RepostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 
 	// Append all of the primary key values for each column
 	for _, obj := range o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), repostPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), replyPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE `reposts` SET %s WHERE %s",
+	sql := fmt.Sprintf("UPDATE `replies` SET %s WHERE %s",
 		strmangle.SetParamNames("`", "`", 0, colNames),
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, repostPrimaryKeyColumns, len(o)))
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, replyPrimaryKeyColumns, len(o)))
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1054,31 +1061,31 @@ func (o RepostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, c
 	}
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to update all in repost slice")
+		return 0, errors.Wrap(err, "sqlboiler: unable to update all in reply slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to retrieve rows affected all in update all repost")
+		return 0, errors.Wrap(err, "sqlboiler: unable to retrieve rows affected all in update all reply")
 	}
 	return rowsAff, nil
 }
 
-var mySQLRepostUniqueColumns = []string{
+var mySQLReplyUniqueColumns = []string{
 	"id",
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
-func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
+func (o *Reply) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
-		return errors.New("sqlboiler: no reposts provided for upsert")
+		return errors.New("sqlboiler: no replies provided for upsert")
 	}
 	if !boil.TimestampsAreSkipped(ctx) {
 		currTime := time.Now().In(boil.GetLocation())
 
-		if queries.MustTime(o.CreatedAt).IsZero() {
-			queries.SetScanner(&o.CreatedAt, currTime)
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
 		}
 		queries.SetScanner(&o.UpdatedAt, currTime)
 	}
@@ -1087,8 +1094,8 @@ func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCo
 		return err
 	}
 
-	nzDefaults := queries.NonZeroDefaultSet(repostColumnsWithDefault, o)
-	nzUniques := queries.NonZeroDefaultSet(mySQLRepostUniqueColumns, o)
+	nzDefaults := queries.NonZeroDefaultSet(replyColumnsWithDefault, o)
+	nzUniques := queries.NonZeroDefaultSet(mySQLReplyUniqueColumns, o)
 
 	if len(nzUniques) == 0 {
 		return errors.New("cannot upsert with a table that cannot conflict on a unique column")
@@ -1116,44 +1123,44 @@ func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCo
 	key := buf.String()
 	strmangle.PutBuffer(buf)
 
-	repostUpsertCacheMut.RLock()
-	cache, cached := repostUpsertCache[key]
-	repostUpsertCacheMut.RUnlock()
+	replyUpsertCacheMut.RLock()
+	cache, cached := replyUpsertCache[key]
+	replyUpsertCacheMut.RUnlock()
 
 	var err error
 
 	if !cached {
 		insert, _ := insertColumns.InsertColumnSet(
-			repostAllColumns,
-			repostColumnsWithDefault,
-			repostColumnsWithoutDefault,
+			replyAllColumns,
+			replyColumnsWithDefault,
+			replyColumnsWithoutDefault,
 			nzDefaults,
 		)
 
 		update := updateColumns.UpdateColumnSet(
-			repostAllColumns,
-			repostPrimaryKeyColumns,
+			replyAllColumns,
+			replyPrimaryKeyColumns,
 		)
 
 		if !updateColumns.IsNone() && len(update) == 0 {
-			return errors.New("sqlboiler: unable to upsert reposts, could not build update column list")
+			return errors.New("sqlboiler: unable to upsert replies, could not build update column list")
 		}
 
-		ret := strmangle.SetComplement(repostAllColumns, strmangle.SetIntersect(insert, update))
+		ret := strmangle.SetComplement(replyAllColumns, strmangle.SetIntersect(insert, update))
 
-		cache.query = buildUpsertQueryMySQL(dialect, "`reposts`", update, insert)
+		cache.query = buildUpsertQueryMySQL(dialect, "`replies`", update, insert)
 		cache.retQuery = fmt.Sprintf(
-			"SELECT %s FROM `reposts` WHERE %s",
+			"SELECT %s FROM `replies` WHERE %s",
 			strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, ret), ","),
 			strmangle.WhereClause("`", "`", 0, nzUniques),
 		)
 
-		cache.valueMapping, err = queries.BindMapping(repostType, repostMapping, insert)
+		cache.valueMapping, err = queries.BindMapping(replyType, replyMapping, insert)
 		if err != nil {
 			return err
 		}
 		if len(ret) != 0 {
-			cache.retMapping, err = queries.BindMapping(repostType, repostMapping, ret)
+			cache.retMapping, err = queries.BindMapping(replyType, replyMapping, ret)
 			if err != nil {
 				return err
 			}
@@ -1175,7 +1182,7 @@ func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCo
 	_, err = exec.ExecContext(ctx, cache.query, vals...)
 
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to upsert for reposts")
+		return errors.Wrap(err, "sqlboiler: unable to upsert for replies")
 	}
 
 	var uniqueMap []uint64
@@ -1185,9 +1192,9 @@ func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCo
 		goto CacheNoHooks
 	}
 
-	uniqueMap, err = queries.BindMapping(repostType, repostMapping, nzUniques)
+	uniqueMap, err = queries.BindMapping(replyType, replyMapping, nzUniques)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to retrieve unique values for reposts")
+		return errors.Wrap(err, "sqlboiler: unable to retrieve unique values for replies")
 	}
 	nzUniqueCols = queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), uniqueMap)
 
@@ -1198,32 +1205,32 @@ func (o *Repost) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCo
 	}
 	err = exec.QueryRowContext(ctx, cache.retQuery, nzUniqueCols...).Scan(returns...)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to populate default values for reposts")
+		return errors.Wrap(err, "sqlboiler: unable to populate default values for replies")
 	}
 
 CacheNoHooks:
 	if !cached {
-		repostUpsertCacheMut.Lock()
-		repostUpsertCache[key] = cache
-		repostUpsertCacheMut.Unlock()
+		replyUpsertCacheMut.Lock()
+		replyUpsertCache[key] = cache
+		replyUpsertCacheMut.Unlock()
 	}
 
 	return o.doAfterUpsertHooks(ctx, exec)
 }
 
-// Delete deletes a single Repost record with an executor.
+// Delete deletes a single Reply record with an executor.
 // Delete will match against the primary key column to find the record to delete.
-func (o *Repost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (o *Reply) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if o == nil {
-		return 0, errors.New("sqlboiler: no Repost provided for delete")
+		return 0, errors.New("sqlboiler: no Reply provided for delete")
 	}
 
 	if err := o.doBeforeDeleteHooks(ctx, exec); err != nil {
 		return 0, err
 	}
 
-	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), repostPrimaryKeyMapping)
-	sql := "DELETE FROM `reposts` WHERE `id`=?"
+	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), replyPrimaryKeyMapping)
+	sql := "DELETE FROM `replies` WHERE `id`=?"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1232,12 +1239,12 @@ func (o *Repost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, 
 	}
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to delete from reposts")
+		return 0, errors.Wrap(err, "sqlboiler: unable to delete from replies")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by delete for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by delete for replies")
 	}
 
 	if err := o.doAfterDeleteHooks(ctx, exec); err != nil {
@@ -1248,33 +1255,33 @@ func (o *Repost) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, 
 }
 
 // DeleteAll deletes all matching rows.
-func (q repostQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (q replyQuery) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if q.Query == nil {
-		return 0, errors.New("sqlboiler: no repostQuery provided for delete all")
+		return 0, errors.New("sqlboiler: no replyQuery provided for delete all")
 	}
 
 	queries.SetDelete(q.Query)
 
 	result, err := q.Query.ExecContext(ctx, exec)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to delete all from reposts")
+		return 0, errors.Wrap(err, "sqlboiler: unable to delete all from replies")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by deleteall for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by deleteall for replies")
 	}
 
 	return rowsAff, nil
 }
 
 // DeleteAll deletes all rows in the slice, using an executor.
-func (o RepostSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
+func (o ReplySlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (int64, error) {
 	if len(o) == 0 {
 		return 0, nil
 	}
 
-	if len(repostBeforeDeleteHooks) != 0 {
+	if len(replyBeforeDeleteHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doBeforeDeleteHooks(ctx, exec); err != nil {
 				return 0, err
@@ -1284,12 +1291,12 @@ func (o RepostSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 
 	var args []interface{}
 	for _, obj := range o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), repostPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), replyPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM `reposts` WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, repostPrimaryKeyColumns, len(o))
+	sql := "DELETE FROM `replies` WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, replyPrimaryKeyColumns, len(o))
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1298,15 +1305,15 @@ func (o RepostSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 	}
 	result, err := exec.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: unable to delete all from repost slice")
+		return 0, errors.Wrap(err, "sqlboiler: unable to delete all from reply slice")
 	}
 
 	rowsAff, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by deleteall for reposts")
+		return 0, errors.Wrap(err, "sqlboiler: failed to get rows affected by deleteall for replies")
 	}
 
-	if len(repostAfterDeleteHooks) != 0 {
+	if len(replyAfterDeleteHooks) != 0 {
 		for _, obj := range o {
 			if err := obj.doAfterDeleteHooks(ctx, exec); err != nil {
 				return 0, err
@@ -1319,8 +1326,8 @@ func (o RepostSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (
 
 // Reload refetches the object from the database
 // using the primary keys with an executor.
-func (o *Repost) Reload(ctx context.Context, exec boil.ContextExecutor) error {
-	ret, err := FindRepost(ctx, exec, o.ID)
+func (o *Reply) Reload(ctx context.Context, exec boil.ContextExecutor) error {
+	ret, err := FindReply(ctx, exec, o.ID)
 	if err != nil {
 		return err
 	}
@@ -1331,26 +1338,26 @@ func (o *Repost) Reload(ctx context.Context, exec boil.ContextExecutor) error {
 
 // ReloadAll refetches every row with matching primary key column values
 // and overwrites the original object slice with the newly updated slice.
-func (o *RepostSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) error {
+func (o *ReplySlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) error {
 	if o == nil || len(*o) == 0 {
 		return nil
 	}
 
-	slice := RepostSlice{}
+	slice := ReplySlice{}
 	var args []interface{}
 	for _, obj := range *o {
-		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), repostPrimaryKeyMapping)
+		pkeyArgs := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(obj)), replyPrimaryKeyMapping)
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT `reposts`.* FROM `reposts` WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, repostPrimaryKeyColumns, len(*o))
+	sql := "SELECT `replies`.* FROM `replies` WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, replyPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
 
 	err := q.Bind(ctx, exec, &slice)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to reload all in RepostSlice")
+		return errors.Wrap(err, "sqlboiler: unable to reload all in ReplySlice")
 	}
 
 	*o = slice
@@ -1358,10 +1365,10 @@ func (o *RepostSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) 
 	return nil
 }
 
-// RepostExists checks if the Repost row exists.
-func RepostExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
+// ReplyExists checks if the Reply row exists.
+func ReplyExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from `reposts` where `id`=? limit 1)"
+	sql := "select exists(select 1 from `replies` where `id`=? limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -1372,19 +1379,19 @@ func RepostExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bo
 
 	err := row.Scan(&exists)
 	if err != nil {
-		return false, errors.Wrap(err, "sqlboiler: unable to check if reposts exists")
+		return false, errors.Wrap(err, "sqlboiler: unable to check if replies exists")
 	}
 
 	return exists, nil
 }
 
-// Exists checks if the Repost row exists.
-func (o *Repost) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
-	return RepostExists(ctx, exec, o.ID)
+// Exists checks if the Reply row exists.
+func (o *Reply) Exists(ctx context.Context, exec boil.ContextExecutor) (bool, error) {
+	return ReplyExists(ctx, exec, o.ID)
 }
 
 // InsertAll inserts all rows with the specified column values, using an executor.
-func (o RepostSlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
+func (o ReplySlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) error {
 	ln := int64(len(o))
 	if ln == 0 {
 		return nil
@@ -1395,8 +1402,8 @@ func (o RepostSlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, c
 		if !boil.TimestampsAreSkipped(ctx) {
 			currTime := time.Now().In(boil.GetLocation())
 
-			if queries.MustTime(row.CreatedAt).IsZero() {
-				queries.SetScanner(&row.CreatedAt, currTime)
+			if row.CreatedAt.IsZero() {
+				row.CreatedAt = currTime
 			}
 			if queries.MustTime(row.UpdatedAt).IsZero() {
 				queries.SetScanner(&row.UpdatedAt, currTime)
@@ -1407,21 +1414,21 @@ func (o RepostSlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, c
 			return err
 		}
 
-		nzDefaults := queries.NonZeroDefaultSet(repostColumnsWithDefault, row)
+		nzDefaults := queries.NonZeroDefaultSet(replyColumnsWithDefault, row)
 		wl, _ := columns.InsertColumnSet(
-			repostAllColumns,
-			repostColumnsWithDefault,
-			repostColumnsWithoutDefault,
+			replyAllColumns,
+			replyColumnsWithDefault,
+			replyColumnsWithoutDefault,
 			nzDefaults,
 		)
 		if i == 0 {
-			sql = "INSERT INTO `reposts` " + "(`" + strings.Join(wl, "`,`") + "`)" + " VALUES "
+			sql = "INSERT INTO `replies` " + "(`" + strings.Join(wl, "`,`") + "`)" + " VALUES "
 		}
 		sql += strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), len(vals)+1, len(wl))
 		if i != len(o)-1 {
 			sql += ","
 		}
-		valMapping, err := queries.BindMapping(repostType, repostMapping, wl)
+		valMapping, err := queries.BindMapping(replyType, replyMapping, wl)
 		if err != nil {
 			return err
 		}
@@ -1435,14 +1442,14 @@ func (o RepostSlice) InsertAll(ctx context.Context, exec boil.ContextExecutor, c
 
 	_, err := exec.ExecContext(ctx, sql, vals...)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to insert into reposts")
+		return errors.Wrap(err, "sqlboiler: unable to insert into replies")
 	}
 
 	return nil
 }
 
 // UpsertAll upserts all rows with the specified column values, using an executor.
-func (o RepostSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
+func (o ReplySlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
 	ln := int64(len(o))
 	if ln == 0 {
 		return nil
@@ -1453,8 +1460,8 @@ func (o RepostSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, u
 		if !boil.TimestampsAreSkipped(ctx) {
 			currTime := time.Now().In(boil.GetLocation())
 
-			if queries.MustTime(row.CreatedAt).IsZero() {
-				queries.SetScanner(&row.CreatedAt, currTime)
+			if row.CreatedAt.IsZero() {
+				row.CreatedAt = currTime
 			}
 			if queries.MustTime(row.UpdatedAt).IsZero() {
 				queries.SetScanner(&row.UpdatedAt, currTime)
@@ -1465,21 +1472,21 @@ func (o RepostSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, u
 			return err
 		}
 
-		nzDefaults := queries.NonZeroDefaultSet(repostColumnsWithDefault, row)
+		nzDefaults := queries.NonZeroDefaultSet(replyColumnsWithDefault, row)
 		insert, _ := insertColumns.InsertColumnSet(
-			repostAllColumns,
-			repostColumnsWithDefault,
-			repostColumnsWithoutDefault,
+			replyAllColumns,
+			replyColumnsWithDefault,
+			replyColumnsWithoutDefault,
 			nzDefaults,
 		)
 		if i == 0 {
-			sql = "INSERT INTO `reposts` " + "(`" + strings.Join(insert, "`,`") + "`)" + " VALUES "
+			sql = "INSERT INTO `replies` " + "(`" + strings.Join(insert, "`,`") + "`)" + " VALUES "
 		}
 		sql += strmangle.Placeholders(dialect.UseIndexPlaceholders, len(insert), len(vals)+1, len(insert))
 		if i != len(o)-1 {
 			sql += ", "
 		}
-		valMapping, err := queries.BindMapping(repostType, repostMapping, insert)
+		valMapping, err := queries.BindMapping(replyType, replyMapping, insert)
 		if err != nil {
 			return err
 		}
@@ -1488,8 +1495,8 @@ func (o RepostSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, u
 	}
 
 	update := updateColumns.UpdateColumnSet(
-		repostAllColumns,
-		repostPrimaryKeyColumns,
+		replyAllColumns,
+		replyPrimaryKeyColumns,
 	)
 	if !updateColumns.IsNone() && len(update) == 0 {
 		return errors.New("sqlboilerdao: unable to upsert account_patients, could not build update column list")
@@ -1511,7 +1518,7 @@ func (o RepostSlice) UpsertAll(ctx context.Context, exec boil.ContextExecutor, u
 
 	_, err := exec.ExecContext(ctx, sql, vals...)
 	if err != nil {
-		return errors.Wrap(err, "sqlboiler: unable to insert into reposts")
+		return errors.Wrap(err, "sqlboiler: unable to insert into replies")
 	}
 
 	return nil

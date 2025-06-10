@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Utes-X API
   version: 1.0.0
-  description: API for users, posts, and reposts
+  description: API for users, posts, and replies
 servers:
   - url: http://localhost:8888
 tags:
@@ -80,29 +80,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
-  /reposts:
+  /replies:
     post:
       tags:
         - posts
-      summary: Create a repost
+      summary: Create a reply
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RepostCreate'
+              $ref: '#/components/schemas/ReplyCreate'
       responses:
         '201':
-          description: Repost created
+          description: Reply created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Repost'
+                $ref: '#/components/schemas/Reply'
   /posts/{post_id}:
     get:
       tags:
         - posts
-      summary: Get a post by ID (include reposts)
+      summary: Get a post by ID (include replies)
       parameters:
         - in: path
           name: post_id
@@ -111,11 +111,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Post found (with reposts)
+          description: Post found (with replies)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostWithReposts'
+                $ref: '#/components/schemas/PostWithReplies'
         '404':
           description: Post not found
 components:
@@ -184,12 +184,13 @@ components:
           format: ulid
         content:
           type: string
-    Repost:
+    Reply:
       type: object
       required:
         - id
         - user_id
-        - post
+        - post_id
+        - content
         - created_at
       properties:
         id:
@@ -198,15 +199,18 @@ components:
         user_id:
           type: string
           format: ulid
-        post:
-          $ref: '#/components/schemas/Post'
+        post_id:
+          type: string
+          format: ulid
+        content:
+          type: string
         created_at:
           type: string
           format: date-time
         updated_at:
           type: string
           format: date-time
-    RepostCreate:
+    ReplyCreate:
       type: object
       required:
         - user_id
@@ -221,12 +225,15 @@ components:
           format: ulid
         content:
           type: string
-    PostWithReposts:
+    PostWithReplies:
       type: object
+      required:
+        - post
+        - replies
       properties:
         post:
           $ref: '#/components/schemas/Post'
-        reposts:
+        replies:
           type: array
           items:
-            $ref: '#/components/schemas/Repost'
+            $ref: '#/components/schemas/Reply'

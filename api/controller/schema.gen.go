@@ -34,23 +34,24 @@ type PostCreate struct {
 	UserId  string `json:"user_id"`
 }
 
-// PostWithReposts defines model for PostWithReposts.
-type PostWithReposts struct {
-	Post    *Post     `json:"post,omitempty"`
-	Reposts *[]Repost `json:"reposts,omitempty"`
+// PostWithReplies defines model for PostWithReplies.
+type PostWithReplies struct {
+	Post    Post    `json:"post"`
+	Replies []Reply `json:"replies"`
 }
 
-// Repost defines model for Repost.
-type Repost struct {
+// Reply defines model for Reply.
+type Reply struct {
+	Content   string     `json:"content"`
 	CreatedAt time.Time  `json:"created_at"`
 	Id        string     `json:"id"`
-	Post      Post       `json:"post"`
+	PostId    string     `json:"post_id"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	UserId    string     `json:"user_id"`
 }
 
-// RepostCreate defines model for RepostCreate.
-type RepostCreate struct {
+// ReplyCreate defines model for ReplyCreate.
+type ReplyCreate struct {
 	Content string `json:"content"`
 	PostId  string `json:"post_id"`
 	UserId  string `json:"user_id"`
@@ -74,8 +75,8 @@ type UserCreate struct {
 // PostPostsJSONRequestBody defines body for PostPosts for application/json ContentType.
 type PostPostsJSONRequestBody = PostCreate
 
-// PostRepostsJSONRequestBody defines body for PostReposts for application/json ContentType.
-type PostRepostsJSONRequestBody = RepostCreate
+// PostRepliesJSONRequestBody defines body for PostReplies for application/json ContentType.
+type PostRepliesJSONRequestBody = ReplyCreate
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody = UserCreate
@@ -85,12 +86,12 @@ type ServerInterface interface {
 	// Create a post
 	// (POST /posts)
 	PostPosts(c *gin.Context)
-	// Get a post by ID (include reposts)
+	// Get a post by ID (include replies)
 	// (GET /posts/{post_id})
 	GetPostsPostId(c *gin.Context, postId string)
-	// Create a repost
-	// (POST /reposts)
-	PostReposts(c *gin.Context)
+	// Create a reply
+	// (POST /replies)
+	PostReplies(c *gin.Context)
 	// Get all users
 	// (GET /users)
 	GetUsers(c *gin.Context)
@@ -148,8 +149,8 @@ func (siw *ServerInterfaceWrapper) GetPostsPostId(c *gin.Context) {
 	siw.Handler.GetPostsPostId(c, postId)
 }
 
-// PostReposts operation middleware
-func (siw *ServerInterfaceWrapper) PostReposts(c *gin.Context) {
+// PostReplies operation middleware
+func (siw *ServerInterfaceWrapper) PostReplies(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -158,7 +159,7 @@ func (siw *ServerInterfaceWrapper) PostReposts(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostReposts(c)
+	siw.Handler.PostReplies(c)
 }
 
 // GetUsers operation middleware
@@ -240,7 +241,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/posts", wrapper.PostPosts)
 	router.GET(options.BaseURL+"/posts/:post_id", wrapper.GetPostsPostId)
-	router.POST(options.BaseURL+"/reposts", wrapper.PostReposts)
+	router.POST(options.BaseURL+"/replies", wrapper.PostReplies)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
 	router.GET(options.BaseURL+"/users/:user_id/posts", wrapper.GetUsersUserIdPosts)
@@ -249,20 +250,20 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8RWX2vbMBD/KuK2hw7cOF37EPzWbVACg4VC2WCEotqXRsW2PEnuCMHffZwkJ05s12mb",
-	"di+pa9/f3/3uzxpimRUyx9xoiNag4yVm3D7OpDb0t1CyQGUE2rexzA3m9oNZFQgRaKNEfg9VALFCbjC5",
-	"5fbzQqqMniDhBk+NyBCCto5IdmTLVCRdYmWRPNt0qVHdHmS/CkDhn1IoTCD6DVak1g42Ke8kON8YkXcP",
-	"GBtySIh9tSLPw+3FgbZj7AvrpzDLayykdmXeja3wlf6ocAERfAi3nAg9IULLBut+Y0QYzPSQnnNKmj4u",
-	"rhRf2UxagXrZNnZvx6vnpP4/OWjjHCSgA/AlFCS920N78fV0rd09Tdwbjeo4bMCMi7Qz8TeePznPsMNv",
-	"X7GteB3uYLkJn75i92d8eFitiNpBkIrIF5KMJahjJQojZA4RXM6mbCEVIyM6YHZqBIznCatHSABGmJSs",
-	"3RjUp7/Y5WwKATyi0s7E2Wg8GlPIssCcFwIiOB+NR+dEIG6WNs9wO9N8KxMKnIKYJhDZ4Tfz7ig31OaL",
-	"TFZ7/cCLIhWx1QofNDmvV+Ehw8HXoNrFz6gS7QtdyFy7qnwenx3Vs/O5Czy9Z545tqS6zDKuVhCBC5Rx",
-	"5seJ4feaCu0wnJOwwzNc+w6tKIp77AD2Ch2u9DO1Pc0Vz9CgIpNrEBQLlQkCcHRrdP0uSkEj431GzlsI",
-	"jo+KYHMx9oG5kGWesJO/wixr8n4iWl6ML9q8txq59Fp7BbhC49Fndys2/cZORB6nZYJbu91Vaazdfp5f",
-	"bxrrLZi+s1zemev1FdEukPsyxHcHXw+2dkI9xfMbK/BKIh50LdmN176VWll/F9owuXDDtYtjaeq/bVN2",
-	"/88bR0+bQdtMj8+fxrZ6Z/Y4VNso0vsh5hBqHSBueBOu/VVTbTfRkzyin2lSr6Thobk9mt5vaB7E1Vn3",
-	"Xd/LVQuPPQk8qt20bYl1NC0ponqsUStVChEsjSmiMExlzNOl1CaaTCYTICy8/v6k/lHXRzN+J0uz6ZgG",
-	"8hqqYFCvnrqNNaehmlf/AgAA//8nX0JbXQ8AAA==",
+	"H4sIAAAAAAAC/9RXb2vbPhD+KuJ+vxcduHG69kXwu26DEhgsFMoGIxTVvjQqtqVJckcI/u7jZDlxYqVJ",
+	"+o/tTZpKd6fnnnt0pywhlYWSJZbWQLIEk86x4O7rRBpLf5WWCrUV6FZTWVos3YZdKIQEjNWivIc6glQj",
+	"t5jdcrc9k7qgb5Bxi6dWFAhR30dkG7ZVLrKQWaWyo0NXBvXtQfHrCDT+qoTGDJKf4Exa72iV8kaC01UQ",
+	"efeAqaUDibHPzuQ43p4NtI9xF6zvws6vUeUezSY25Sv9v8YZJPBfvNZE7AUROzW441dBhMXC7POjQxfk",
+	"6GFxrfmil4hDsA4eyqIJ9LfokQDf/gPabXEeoWJH9HNkfBQnL5d8P7VQNjcGdSCNZygDCy7yYOJvrIOS",
+	"Fxg4d1fhnXkLd2+1iZ9dxd6d8eGweoj6IMhFlDNJwTI0qRbKCllCApeTMZtJzSiIiRhV3ESMlxlrO0UE",
+	"Vticot1YNKc/2OVkDBE8ojZNiLPBcDAkyFJhyZWABM4Hw8E5CYjbucszdoG7nZBY4ARinEHiGujEmTS5",
+	"obGfZLbYug9cqVykzit+MHR4O04P6a2+BvUmf1ZX6BaMkqVpqvJxePaqJzdnbhJP68wrx5XUVEXB9QIS",
+	"aIAyznzPtvzetC3cwJSMGz7jpb+hNaG4xwCxV9jwSh9jd6e55gVa1BRyCYKwUJkggkZunVu/yVLUyXhb",
+	"kdMeg8NXZbA7XHeROZNVmbGT38LOW/F+IFleDC/6uncepfReWwW4QuvZZ3cLNv7CTkSZ5lWG67jhqnRG",
+	"926dX68u1lsovTtb3lnq/iHSL4/b2Cd27bzDvLru9JTGb5zBC0V40GvLTbv+Y6uX81dhLJOzprGG9JXn",
+	"fm+dcvP/1A/6sHrWmb6+djqT6p2l07DaZ5HW9wmHWAuQuNJNvPQvmno9hZ7UEX2Ms3Yc7W+Y6wfT+zXM",
+	"g7Ta/qI4VKuOHvcc8KyGZdszC1xackT92LJW6RwSmFurkjjOZcrzuTQ2GY1GIyAuvP92l/7W1scwficr",
+	"u7oxHeYN1NFeP+WL2RlxBupp/ScAAP//nChwEJ0PAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
