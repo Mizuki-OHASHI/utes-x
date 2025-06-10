@@ -33,7 +33,7 @@ func (u *useeDao) GetMany(ctx context.Context) ([]model.User, error) {
 
 func (u *useeDao) Create(ctx context.Context, user model.User) (*model.User, error) {
 	userDto := sqlboiler.User{
-		ID:       user.ID,
+		ID:       user.ID.String(),
 		Username: user.Username,
 		Email:    user.Email,
 	}
@@ -41,7 +41,7 @@ func (u *useeDao) Create(ctx context.Context, user model.User) (*model.User, err
 		return nil, xerrors.Errorf("failed to create user: %w", err)
 	}
 	newUserDto, err := sqlboiler.Users(
-		sqlboiler.UserWhere.ID.EQ(user.ID),
+		sqlboiler.UserWhere.ID.EQ(user.ID.String()),
 	).One(ctx, u.db)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to fetch created user: %w", err)

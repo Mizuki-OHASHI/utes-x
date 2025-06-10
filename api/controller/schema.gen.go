@@ -21,11 +21,11 @@ import (
 
 // Post defines model for Post.
 type Post struct {
-	Content   *string    `json:"content,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	Id        *string    `json:"id,omitempty"`
+	Content   string     `json:"content"`
+	CreatedAt time.Time  `json:"created_at"`
+	Id        string     `json:"id"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	UserId    *string    `json:"user_id,omitempty"`
+	UserId    string     `json:"user_id"`
 }
 
 // PostCreate defines model for PostCreate.
@@ -42,11 +42,11 @@ type PostWithReposts struct {
 
 // Repost defines model for Repost.
 type Repost struct {
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	Id        *string    `json:"id,omitempty"`
-	PostId    *string    `json:"post_id,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	Id        string     `json:"id"`
+	Post      Post       `json:"post"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	UserId    *string    `json:"user_id,omitempty"`
+	UserId    string     `json:"user_id"`
 }
 
 // RepostCreate defines model for RepostCreate.
@@ -58,11 +58,11 @@ type RepostCreate struct {
 
 // User defines model for User.
 type User struct {
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	Email     *string    `json:"email,omitempty"`
-	Id        *string    `json:"id,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	Email     string     `json:"email"`
+	Id        string     `json:"id"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	Username  *string    `json:"username,omitempty"`
+	Username  string     `json:"username"`
 }
 
 // UserCreate defines model for UserCreate.
@@ -249,20 +249,20 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8xW32vjOBD+V8zcPfTAjdNrH4LferdQAgsbCmUXllBUe9Ko2JZWkruE4P99GUmOndjO",
-	"j21a9iV1Jc2M5vu+mdEaEpFLUWBhNMRr0MkSc2Y/Z0Ib+iuVkKgMR7uaiMJgYTfMSiLEoI3ixTNUISQK",
-	"mcH0kdnthVA5fUHKDF4aniOEXRuebp0tM572HStlerLrUqN6PMp/tVkRTy+YGLKm9P+3CZ0GwklRFf4o",
-	"ucIU4u8bw3Djfj5wra/cLO9RCu04276b9LT9rXABMfwVNQRHnt3IUmvDb5xwg7k+ZOeCQgMXU4qt+vHz",
-	"Z7vYvZ9IKODjHysoB8jvSOqkvN4uvzrcfiE+aFTnYRdzxrPexN+Zy4Ll2BO3Gsh2iLrh++8Psou+PVnD",
-	"0YWcTHixEOQsRZ0oLg0XBcRwO5sGC6ECcqLDwNZ0GLAiDeoCD8Fwk5G3B4P68ltwO5tCCK+otHNxNRqP",
-	"xnRlIbFgkkMM16Px6JrkwMzS5hk1HcdXNqHA6BLTFGLbmmY+HOWG2vwn0tWOupmUGU+sVfSiKXg9dY7p",
-	"Wp6Dahs/o0q0C1qKQjtW/h1fnTWyi7kNPK0HXvKWUl3mOVMriMFdNGCWDcKfPWsi2mE4p8MOz2jt662i",
-	"WzxjD7B36HCln6mtUKZYjgYVuVwDp7sQTRCCk1urhrdRClsZ7ypy3kFwfFYE22NrCMyFKIs0uPjJzbIW",
-	"7z8ky5vxTVf31qIQ3mqHgDs0Hv3gaRVMPwUXvEiyMsXGbz8rraE4rPP7TWG9h9K3RsUHa72e8V2C3M4h",
-	"vTv4WtjWeDp0bY/ap/QHe+CNUjzqNWMnWPct08n7M9cmEAvXXvtUlmV+r0na/T/3w7tfQ02m51dQa159",
-	"sH4cql0Uaf2Qdgi1HhA3uonW/pVSNbNor47oZ5rWQ+lw22weQR/XNo/S6qz/3T2oVQuPfRR4VPtl2znW",
-	"0xLJENVrjVqpMohhaYyMoygTCcuWQpt4MplMgLDw9ru9+kvNjw7YkyjNpmJayGuowoN2dd9tDbqj7Jqn",
-	"kLesF6p59SsAAP//i4SLvwYPAAA=",
+	"H4sIAAAAAAAC/8RWX2vbMBD/KuK2hw7cOF37EPzWbVACg4VC2WCEotqXRsW2PEnuCMHffZwkJ05s12mb",
+	"di+pa9/f3/3uzxpimRUyx9xoiNag4yVm3D7OpDb0t1CyQGUE2rexzA3m9oNZFQgRaKNEfg9VALFCbjC5",
+	"5fbzQqqMniDhBk+NyBCCto5IdmTLVCRdYmWRPNt0qVHdHmS/CkDhn1IoTCD6DVak1g42Ke8kON8YkXcP",
+	"GBtySIh9tSLPw+3FgbZj7AvrpzDLayykdmXeja3wlf6ocAERfAi3nAg9IULLBut+Y0QYzPSQnnNKmj4u",
+	"rhRf2UxagXrZNnZvx6vnpP4/OWjjHCSgA/AlFCS920N78fV0rd09Tdwbjeo4bMCMi7Qz8TeePznPsMNv",
+	"X7GteB3uYLkJn75i92d8eFitiNpBkIrIF5KMJahjJQojZA4RXM6mbCEVIyM6YHZqBIznCatHSABGmJSs",
+	"3RjUp7/Y5WwKATyi0s7E2Wg8GlPIssCcFwIiOB+NR+dEIG6WNs9wO9N8KxMKnIKYJhDZ4Tfz7ig31OaL",
+	"TFZ7/cCLIhWx1QofNDmvV+Ehw8HXoNrFz6gS7QtdyFy7qnwenx3Vs/O5Czy9Z545tqS6zDKuVhCBC5Rx",
+	"5seJ4feaCu0wnJOwwzNc+w6tKIp77AD2Ch2u9DO1Pc0Vz9CgIpNrEBQLlQkCcHRrdP0uSkEj431GzlsI",
+	"jo+KYHMx9oG5kGWesJO/wixr8n4iWl6ML9q8txq59Fp7BbhC49Fndys2/cZORB6nZYJbu91Vaazdfp5f",
+	"bxrrLZi+s1zemev1FdEukPsyxHcHXw+2dkI9xfMbK/BKIh50LdmN176VWll/F9owuXDDtYtjaeq/bVN2",
+	"/88bR0+bQdtMj8+fxrZ6Z/Y4VNso0vsh5hBqHSBueBOu/VVTbTfRkzyin2lSr6Thobk9mt5vaB7E1Vn3",
+	"Xd/LVQuPPQk8qt20bYl1NC0ponqsUStVChEsjSmiMExlzNOl1CaaTCYTICy8/v6k/lHXRzN+J0uz6ZgG",
+	"8hqqYFCvnrqNNaehmlf/AgAA//8nX0JbXQ8AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

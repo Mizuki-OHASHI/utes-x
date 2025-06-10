@@ -122,6 +122,11 @@ components:
   schemas:
     User:
       type: object
+      required:
+        - id
+        - username
+        - email
+        - created_at
       properties:
         id:
           type: string
@@ -148,6 +153,11 @@ components:
           type: string
     Post:
       type: object
+      required:
+        - id
+        - user_id
+        - content
+        - created_at
       properties:
         id:
           type: string
@@ -176,6 +186,11 @@ components:
           type: string
     Repost:
       type: object
+      required:
+        - id
+        - user_id
+        - post
+        - created_at
       properties:
         id:
           type: string
@@ -183,9 +198,8 @@ components:
         user_id:
           type: string
           format: ulid
-        post_id:
-          type: string
-          format: ulid
+        post:
+          $ref: '#/components/schemas/Post'
         created_at:
           type: string
           format: date-time
