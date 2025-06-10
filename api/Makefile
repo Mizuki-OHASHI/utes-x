@@ -3,12 +3,10 @@ gen-boiler:
 	sqlboiler mysql -c sqlboiler.toml -o entity -p sqlboiler --no-tests --wipe --templates /$(GOPATH)/pkg/mod/github.com/volatiletech/sqlboiler/v4@v4.16.2/templates/main /$(GOPATH)/pkg/mod/github.com/volatiletech/sqlboiler/v4@v4.16.2/templates/test --templates ./templates
 
 gen-mock:
-	@for file in $(shell ls dao/*.go); do \
+	@for file in $(shell ls dao/*.go | grep -v '\.conv\.go$$'); do \
 		mockgen -source=$$file -destination=dao/mock$${file/dao/} -package=mockdao && \
 		echo "Generated mock for $$file"; \
 	done
-	@mockgen -source=usecase/score.go -destination=usecase/mock/score.go -package=mockusecase && \
-	echo "Generated mock for usecase/score.go"
 
 gen-open-api:
 	cd controller && \

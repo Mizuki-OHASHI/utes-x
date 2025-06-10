@@ -12,9 +12,9 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/volatiletech/null/v8 v8.1.2
-	github.com/volatiletech/sqlboiler v3.7.1+incompatible
 	github.com/volatiletech/sqlboiler/v4 v4.19.1
 	github.com/volatiletech/strmangle v0.0.8
+	go.uber.org/mock v0.5.2
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f
 )
 
