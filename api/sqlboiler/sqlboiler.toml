@@ -1,0 +1,9 @@
+pkgname = "sqlboiler"
+output = "entity"
+[mysql]
+dbname = "utes_x_database"
+host = "localhost"
+port = 3307
+user = "utes_x_user"
+pass = "utes_x_password"
+sslmode = "false"

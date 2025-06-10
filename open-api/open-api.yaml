@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: Utes-X API
+  version: 1.0.0
+  description: API for users, posts, and reposts
+servers:
+  - url: http://localhost:8888
+tags:
+  - name: users
+    description: Operations about users
+  - name: posts
+    description: Operations about posts
+  - name: reposts
+    description: Operations about reposts
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get all users
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - users
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{user_id}/posts:
+    get:
+      tags:
+        - posts
+      summary: Get all posts for a user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of posts for a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+  /posts:
+    post:
+      tags:
+        - posts
+      summary: Create a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /reposts:
+    post:
+      tags:
+        - reposts
+      summary: Create a repost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepostCreate'
+      responses:
+        '201':
+          description: Repost created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repost'
+  /posts/{post_id}:
+    get:
+      tags:
+        - posts
+      summary: Get a post by ID (include reposts)
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post found (with reposts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostWithReposts'
+        '404':
+          description: Post not found
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    UserCreate:
+      type: object
+      required:
+        - username
+        - email
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PostCreate:
+      type: object
+      required:
+        - user_id
+        - content
+      properties:
+        user_id:
+          type: string
+        content:
+          type: string
+    Repost:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        post_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    RepostCreate:
+      type: object
+      required:
+        - user_id
+        - post_id
+      properties:
+        user_id:
+          type: string
+        post_id:
+          type: string
+    PostWithReposts:
+      type: object
+      properties:
+        post:
+          $ref: '#/components/schemas/Post'
+        reposts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repost'
