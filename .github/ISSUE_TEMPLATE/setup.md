@@ -39,3 +39,25 @@ assignees: ''
 ```bash
 go run main.go
 ```
+
+以下のようなレポジトリが出力されれば成功です。
+- [ ] サーバーが起動することを確認した。
+
+```bash
+$ go run main.go
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /posts                    --> utes-x-api/controller.(*ServerInterfaceWrapper).PostPosts-fm (4 handlers)
+[GIN-debug] GET    /posts/:post_id           --> utes-x-api/controller.(*ServerInterfaceWrapper).GetPostsPostId-fm (4 handlers)
+[GIN-debug] POST   /replies                  --> utes-x-api/controller.(*ServerInterfaceWrapper).PostReplies-fm (4 handlers)
+[GIN-debug] GET    /users                    --> utes-x-api/controller.(*ServerInterfaceWrapper).GetUsers-fm (4 handlers)
+[GIN-debug] POST   /users                    --> utes-x-api/controller.(*ServerInterfaceWrapper).PostUsers-fm (4 handlers)
+[GIN-debug] GET    /users/:user_id/posts     --> utes-x-api/controller.(*ServerInterfaceWrapper).GetUsersUserIdPosts-fm (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8888
+```
