@@ -10,8 +10,6 @@ tags:
     description: Operations about users
   - name: posts
     description: Operations about posts
-  - name: reposts
-    description: Operations about reposts
 paths:
   /users:
     get:
@@ -85,7 +83,7 @@ paths:
   /reposts:
     post:
       tags:
-        - reposts
+        - posts
       summary: Create a repost
       requestBody:
         required: true
@@ -127,6 +125,7 @@ components:
       properties:
         id:
           type: string
+          format: ulid
         username:
           type: string
         email:
@@ -152,8 +151,10 @@ components:
       properties:
         id:
           type: string
+          format: ulid
         user_id:
           type: string
+          format: ulid
         content:
           type: string
         created_at:
@@ -170,6 +171,7 @@ components:
       properties:
         user_id:
           type: string
+          format: ulid
         content:
           type: string
     Repost:
@@ -177,10 +179,13 @@ components:
       properties:
         id:
           type: string
+          format: ulid
         user_id:
           type: string
+          format: ulid
         post_id:
           type: string
+          format: ulid
         created_at:
           type: string
           format: date-time
@@ -192,10 +197,15 @@ components:
       required:
         - user_id
         - post_id
+        - content
       properties:
         user_id:
           type: string
+          format: ulid
         post_id:
+          type: string
+          format: ulid
+        content:
           type: string
     PostWithReposts:
       type: object

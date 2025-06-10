@@ -18,3 +18,6 @@ func (p *postController) PostPosts(ctx *gin.Context) {}
 
 // GET /posts/{post_id}
 func (p *postController) GetPostsPostId(ctx *gin.Context, postId string) {}
+
+// POST /reposts
+func (p *postController) PostReposts(ctx *gin.Context) {}
