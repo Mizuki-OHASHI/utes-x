@@ -31,7 +31,8 @@ api
 
 研修プログラムの [「ソースコードの改善」の章](https://utokyotechclub.gitbook.io/curriculum/intern/ssukdonogo) の構成に従っています。
 
-<img src="../../assets/image.avif" alt="ディレクトリ構成" width="600">
+<img src="https://utokyotechclub.gitbook.io/~gitbook/image?url=https%3A%2F%2F686112546-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F15Gri4KP0qK959o0eDJi%252Fuploads%252FhhgWZL2BuS52gbCvcZQ3%252F%25E3%2582%25B9%25E3%2582%25AF%25E3%2583%25AA%25E3%2583%25BC%25E3%2583%25B3%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%2583%25E3%2583%2588%25202023-03-24%252020.50.49.png%3Falt%3Dmedia%26token%3D6cfa7814-3317-41e5-99f6-c5f5bfdaa7d6&width=400&dpr=2&quality=100&sign=6981a6ef&sv=2" alt="ディレクトリ構成" width="600">
+
 
 ### 2. 技術スタックの確認
 
