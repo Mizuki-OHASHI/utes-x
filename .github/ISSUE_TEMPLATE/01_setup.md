@@ -21,6 +21,7 @@ assignees: ''
 - [ ] Docker
 - [ ] Docker Compose
 - [ ] Go (>= 1.23)
+- [ ] make
 - [ ] golang-migrate
 - [ ] sqlboiler
 - [ ] mockgen
@@ -30,6 +31,7 @@ assignees: ''
 
 - 研修では上の3つ (Docker, Docker Compose, Go) は完了しているはずです。
 - Mac OS の場合、可能なものについては `homebrew` を使うと簡単にインストールできます。
+- Mac OS の場合、`make` コマンドは標準でサポートされています。
 
 ### 2. 動作確認
 
