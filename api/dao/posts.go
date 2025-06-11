@@ -18,7 +18,7 @@ type GetManyQuery struct {
 type Post interface {
 	GetMany(ctx context.Context, query GetManyQuery) ([]model.Post, error)
 	Create(ctx context.Context, post model.Post) (*model.Post, error)
-	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Post, error)
+	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error)
 	GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
 }
 
@@ -58,7 +58,7 @@ func (p *postDao) Create(ctx context.Context, post model.Post) (*model.Post, err
 	return toPostModel(*newPostDto)
 }
 
-func (p *postDao) CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Post, error) {
+func (p *postDao) CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error) {
 	replyDto := sqlboiler.Reply{
 		ID:      reply.ID.String(),
 		PostID:  replyTo.String(),

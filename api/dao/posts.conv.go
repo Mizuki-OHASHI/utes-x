@@ -28,10 +28,11 @@ func toPostModelSlice(postsDto sqlboiler.PostSlice) ([]model.Post, error) {
 	return posts, nil
 }
 
-func toReplyModel(replyDto sqlboiler.Reply) (*model.Post, error) {
-	reply := model.Post{
+func toReplyModel(replyDto sqlboiler.Reply) (*model.Reply, error) {
+	reply := model.Reply{
 		ID:        model.MustParseID(replyDto.ID),
 		UserID:    model.MustParseID(replyDto.UserID),
+		PostID:    model.MustParseID(replyDto.PostID),
 		Content:   replyDto.Content,
 		CreatedAt: replyDto.CreatedAt,
 		UpdatedAt: replyDto.UpdatedAt.Ptr(),
@@ -45,7 +46,7 @@ func toPostWithRepliesModel(postDto sqlboiler.Post) (*model.PostWithReplies, err
 		return nil, err
 	}
 	repliesDto := postDto.R.GetReplies()
-	Replies := make([]model.Post, len(repliesDto))
+	Replies := make([]model.Reply, len(repliesDto))
 	for i, replyDto := range repliesDto {
 		reply, err := toReplyModel(*replyDto)
 		if err != nil {

@@ -10,7 +10,7 @@ type Post interface {
 	GetMany(ctx context.Context, userID model.ID) ([]model.Post, error)
 	Create(ctx context.Context, userID model.ID, content string) (*model.Post, error)
 	GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
-	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, content string) (*model.Post, error)
+	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, content string) (*model.Reply, error)
 }
 
 type postUsecase struct {
@@ -50,7 +50,7 @@ func (p *postUsecase) GetWithReplies(ctx context.Context, postID model.ID) (*mod
 	return postWithReplies, nil
 }
 
-func (p *postUsecase) CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, content string) (*model.Post, error) {
+func (p *postUsecase) CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, content string) (*model.Reply, error) {
 	reply := model.Post{
 		ID:      model.NewID(),
 		UserID:  userID,

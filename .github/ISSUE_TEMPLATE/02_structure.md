@@ -29,7 +29,9 @@ api
 └── usecase/ # ユースケース (ビジネスロジックを実装)
 ```
 
-研修プログラムの [「ソースコードの改善」の章](https://utokyotechclub.gitbook.io/curriculum/intern/ssukdonogo) の構成に従っています。
+研修プログラムインターン編の [「ソースコードの改善」の章](https://utokyotechclub.gitbook.io/curriculum/intern/ssukdonogo) の構成に従っています。
+
+- [ ] 研修プログラムインターン編の「ソースコードの改善」の章を確認した。
 
 <img src="https://utokyotechclub.gitbook.io/~gitbook/image?url=https%3A%2F%2F686112546-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F15Gri4KP0qK959o0eDJi%252Fuploads%252FhhgWZL2BuS52gbCvcZQ3%252F%25E3%2582%25B9%25E3%2582%25AF%25E3%2583%25AA%25E3%2583%25BC%25E3%2583%25B3%25E3%2582%25B7%25E3%2583%25A7%25E3%2583%2583%25E3%2583%2588%25202023-03-24%252020.50.49.png%3Falt%3Dmedia%26token%3D6cfa7814-3317-41e5-99f6-c5f5bfdaa7d6&width=400&dpr=2&quality=100&sign=6981a6ef&sv=2" alt="ディレクトリ構成" width="600">
 
@@ -56,8 +58,8 @@ api
 ### 3. 本カリキュラムでやること
 
 本カリキュラムでは、新たに投稿に対する LIKE 機能 (Create/Read) を実装します。
-
 投稿に対する LIKE 機能を実装するために、以下のステップを進めます。
+
 - [Step 3] OpenAPI
   - OpenAPI は API の仕様を YAML/JSON で定義するフォーマットです。
   - こちらのファイルを見て、実装すべきエンドポイントの確認をします。
@@ -75,3 +77,11 @@ api
   - ユースケースは、ビジネスロジックを実装するレイヤーです。
   - 投稿に対する LIKE 機能のビジネスロジックを実装します。
 - [Step 7] コントローラー
+  - コントローラーは、HTTP リクエストを受け取り、レスポンスを返す役割を担います。
+  - ユースケースで実装したビジネスロジックを呼び出し、HTTP レスポンスを返すコントローラーのメソッドを実装します。
+- [Step 8] 単体テスト
+  -  ここではロジックが複雑になりがちなユースケースレイヤーの単体テストを実装します。
+
+### 4. 準備
+
+最後に、次のステップに進む前に、データベースにダミーデータを投入しておきましょう。

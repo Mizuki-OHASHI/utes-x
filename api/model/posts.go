@@ -10,7 +10,16 @@ type Post struct {
 	UpdatedAt *time.Time
 }
 
+type Reply struct {
+	ID        ID
+	UserID    ID
+	PostID    ID
+	Content   string
+	CreatedAt time.Time
+	UpdatedAt *time.Time
+}
+
 type PostWithReplies struct {
 	Post
-	Replies []Post
+	Replies []Reply
 }

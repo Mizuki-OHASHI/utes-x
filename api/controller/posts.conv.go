@@ -22,17 +22,18 @@ func toPostResponseSlice(posts []model.Post) []Post {
 	return res
 }
 
-func toReplyResponse(reply model.Post) Reply {
+func toReplyResponse(reply model.Reply) Reply {
 	return Reply{
 		Id:        reply.ID.String(),
 		UserId:    reply.UserID.String(),
+		PostId:    reply.PostID.String(),
 		Content:   reply.Content,
 		CreatedAt: reply.CreatedAt,
 		UpdatedAt: nil,
 	}
 }
 
-func toReplyResponseSlice(replies []model.Post) []Reply {
+func toReplyResponseSlice(replies []model.Reply) []Reply {
 	res := make([]Reply, len(replies))
 	for i, reply := range replies {
 		res[i] = toReplyResponse(reply)
