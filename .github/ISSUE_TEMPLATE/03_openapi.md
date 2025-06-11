@@ -15,7 +15,7 @@ assignees: ''
 
 ## 手順
 
-### 1. OpenAPI の確認
+### 1. OpenAPI で仕様を確認する
 
 OpenAPI の仕様は、`api/controller/openapi.yaml` に定義されています。
 
