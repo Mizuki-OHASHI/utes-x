@@ -63,3 +63,8 @@ repliesDto := postDto.R.GetReplies()
 
 なお、JOIN される側のテーブルのカラムについての WHERE 条件を指定する場合には明示的に JOIN 句を指定する必要があるので注意して下さい。
 
+### 2. Dao の実装
+
+SQLBoiler を使って、DAO (Data Access Object) を実装します。DAO は、データベース操作を抽象化し、ビジネスロジックからデータベースの詳細を隠蔽します。
+
+まずは、LIKE の作成の DAO を実装します。
