@@ -101,3 +101,12 @@ gen-open-api:
 ```
 
 - [ ] `make gen-open-api` を実行して、OpenAPI からコードを生成し、`api/controller/schema.gen.go` ファイルが編集されていることを確認してください。
+
+### 3. 実装すべきエンドポイントを確認する
+
+OpenAPI の仕様変更に基づくと、
+
+- `POST /posts/{post_id}/like` エンドポイントの実装
+- Post の構造体変更 (Like したユーザーの情報を含める)
+
+を行う必要があることがわかります。

@@ -68,3 +68,5 @@ repliesDto := postDto.R.GetReplies()
 SQLBoiler を使って、DAO (Data Access Object) を実装します。DAO は、データベース操作を抽象化し、ビジネスロジックからデータベースの詳細を隠蔽します。
 
 まずは、LIKE の作成の DAO を実装します。
+
+LIKE 機能は投稿に関係するものですから、今回は既存のファイル `dao/posts.go` に追加します。
