@@ -1,0 +1,13 @@
+BEGIN;
+
+CREATE TABLE likes (
+    id VARCHAR(32) PRIMARY KEY,
+    post_id VARCHAR(32) NOT NULL,
+    user_id VARCHAR(32) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+COMMIT;
