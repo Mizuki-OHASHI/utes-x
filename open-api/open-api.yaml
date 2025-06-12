@@ -118,6 +118,36 @@ paths:
                 $ref: '#/components/schemas/PostWithReplies'
         '404':
           description: Post not found
+  /posts/{post_id}/like:
+    post:
+      tags:
+        - posts
+      summary: Like a post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  format: ulid
+              required:
+                - user_id
+      responses:
+        '200':
+          description: Like added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
 components:
   schemas:
     User:
@@ -158,6 +188,7 @@ components:
         - user_id
         - content
         - created_at
+        - likes
       properties:
         id:
           type: string
@@ -173,6 +204,11 @@ components:
         updated_at:
           type: string
           format: date-time
+        likes:
+          type: array
+          description: List of users who liked the post
+          items:
+            $ref: '#/components/schemas/User'
     PostCreate:
       type: object
       required:
