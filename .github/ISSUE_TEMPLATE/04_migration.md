@@ -106,6 +106,6 @@ COMMIT;
 
 - [ ] 最後にマーグレーションを適用してください。
 
-      ```bash
-      make migrate-up
-      ```
+  ```bash
+  make migrate-up
+  ```
