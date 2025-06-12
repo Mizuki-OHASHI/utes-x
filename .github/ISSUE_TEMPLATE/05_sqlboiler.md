@@ -49,7 +49,7 @@ SQLBoiler では、明示的に JOIN しなくても、eager loading を使う�
 ```go
 // dao/posts.go
 postDto, err := sqlboiler.Posts(
-  sqlboiler.PostWhere.ID.EQ(postID.String()),
+  sqlboiler.PostWhere.ID.EQ("01JXCX2QSSEK1Q4M4HWYCAYM7V"),
   qm.Load(sqlboiler.PostRels.Replies),
 ).One(ctx, p.db)
 ```
