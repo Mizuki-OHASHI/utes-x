@@ -70,12 +70,12 @@ repliesDto := postDto.R.GetReplies()
 ```go
 // ...
 type PostLike struct {
-  ID model.ID
-  PostID model.ID
-  UserID model.ID
+  ID        ID
+  PostID    ID
+  UserID    ID
   CreatedAt time.Time
   UpdatedAt *time.Time
-  User *User
+  User      *User
 }
 // ...
 ```
