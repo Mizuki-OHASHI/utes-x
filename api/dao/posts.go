@@ -20,6 +20,7 @@ type Post interface {
 	Create(ctx context.Context, post model.Post) (*model.Post, error)
 	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error)
 	GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
+	CreateLike(ctx context.Context, like model.PostLike) (*model.PostLike, error)
 }
 
 type postDao struct {
@@ -33,6 +34,8 @@ func NewPostDao(db *sql.DB) Post {
 func (p *postDao) GetMany(ctx context.Context, query GetManyQuery) ([]model.Post, error) {
 	posts, err := sqlboiler.Posts(
 		sqlboiler.PostWhere.UserID.EQ(query.UserID.String()),
+		qm.Load(sqlboiler.PostRels.Likes),
+		qm.Load(qm.Rels(sqlboiler.PostRels.Likes, sqlboiler.LikeRels.User)),
 	).All(ctx, p.db)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to get posts: %w", err)
@@ -81,9 +84,29 @@ func (p *postDao) GetWithReplies(ctx context.Context, postID model.ID) (*model.P
 	postDto, err := sqlboiler.Posts(
 		sqlboiler.PostWhere.ID.EQ(postID.String()),
 		qm.Load(sqlboiler.PostRels.Replies),
+		qm.Load(sqlboiler.PostRels.Likes),
+		qm.Load(qm.Rels(sqlboiler.PostRels.Likes, sqlboiler.LikeRels.User)),
 	).One(ctx, p.db)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to get post with Replies: %w", err)
 	}
 	return toPostWithRepliesModel(*postDto)
+}
+
+func (p *postDao) CreateLike(ctx context.Context, like model.PostLike) (*model.PostLike, error) {
+	likeDto := sqlboiler.Like{
+		ID:     like.ID.String(),
+		PostID: like.PostID.String(),
+		UserID: like.UserID.String(),
+	}
+	if err := likeDto.Insert(ctx, p.db, boil.Infer()); err != nil {
+		return nil, xerrors.Errorf("failed to create post like: %w", err)
+	}
+	newLikeDto, err := sqlboiler.Likes(
+		sqlboiler.LikeWhere.ID.EQ(like.ID.String()),
+	).One(ctx, p.db)
+	if err != nil {
+		return nil, xerrors.Errorf("failed to fetch created post like: %w", err)
+	}
+	return toPostLikeModel(*newLikeDto)
 }

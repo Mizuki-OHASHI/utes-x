@@ -6,6 +6,7 @@ type Post struct {
 	ID        ID
 	UserID    ID
 	Content   string
+	Likes     []PostLike
 	CreatedAt time.Time
 	UpdatedAt *time.Time
 }
@@ -22,4 +23,13 @@ type Reply struct {
 type PostWithReplies struct {
 	Post
 	Replies []Reply
+}
+
+type PostLike struct {
+	ID        ID
+	PostID    ID
+	UserID    ID
+	CreatedAt time.Time
+	UpdatedAt *time.Time
+	User      *User
 }
