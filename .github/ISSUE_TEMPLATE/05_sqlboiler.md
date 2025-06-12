@@ -103,10 +103,10 @@ SQLBoiler を使って、DAO (Data Access Object) を実装します。DAO は�
 
 ```go
 type Post interface {
-	GetMany(ctx context.Context, query GetManyQuery) ([]model.Post, error)
-	Create(ctx context.Context, post model.Post) (*model.Post, error)
-	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error)
-	GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
+  GetMany(ctx context.Context, query GetManyQuery) ([]model.Post, error)
+  Create(ctx context.Context, post model.Post) (*model.Post, error)
+  CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error)
+  GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
   CreateLike(ctx context.Context, like model.PostLike) (*model.PostLike, error) // <-- 追加
 }
 ```
