@@ -105,6 +105,7 @@ COMMIT;
 </details>
 
 - [ ] 最後にマーグレーションを適用してください。
+
       ```bash
       make migrate-up
       ```
