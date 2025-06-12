@@ -63,10 +63,92 @@ repliesDto := postDto.R.GetReplies()
 
 なお、JOIN される側のテーブルのカラムについての WHERE 条件を指定する場合には明示的に JOIN 句を指定する必要があるので注意して下さい。
 
-### 2. Dao の実装
+### 2. Model の実装
+
+- [ ] まずは、`model/posts.go` に LIKE 機能に関する構造体を定義します。
+
+```go
+// ...
+type PostLike struct {
+  ID model.ID
+  PostID model.ID
+  UserID model.ID
+  CreatedAt time.Time
+  UpdatedAt *time.Time
+  User *User
+}
+// ...
+```
+
+- [ ] さらに、既存の `Post` 構造体に、`Likes` フォールドを追加します。
+
+```go
+// ...
+type Post struct {
+  // ...
+  Likes []PostLike
+}
+// ...
+```
+
+### 3. DAO の実装
 
 SQLBoiler を使って、DAO (Data Access Object) を実装します。DAO は、データベース操作を抽象化し、ビジネスロジックからデータベースの詳細を隠蔽します。
 
-まずは、LIKE の作成の DAO を実装します。
+#### LIKE の作成
 
-LIKE 機能は投稿に関係するものですから、今回は既存のファイル `dao/posts.go` に追加します。
+まずは、LIKE の作成の D を実装します。LIKE 機能は投稿に関係するものですから、今回は既存のファイル `dao/posts.go` に追加します。
+
+- [ ] はじめに、DAO のインターフェースに LIKE 機能を追加します。
+
+```go
+type Post interface {
+	GetMany(ctx context.Context, query GetManyQuery) ([]model.Post, error)
+	Create(ctx context.Context, post model.Post) (*model.Post, error)
+	CreateReply(ctx context.Context, replyTo model.ID, userID model.ID, reply model.Post) (*model.Reply, error)
+	GetWithReplies(ctx context.Context, postID model.ID) (*model.PostWithReplies, error)
+  CreateLike(ctx context.Context, like model.PostLike) (*model.PostLike, error) // <-- 追加
+}
+```
+
+この状態では、インターフェースだけが定義され、中身はまだ実装されていません。そのため、静的解析ではエラーが発生していると思います。以下で、実装を進めていきます。
+
+- [ ]  まず、`CreateLike` として、関数を追加します。
+
+```go
+// ...
+func (p *Post) CreateLike(ctx context.Context, like model.PostLike) (*model.PostLike, error) {
+  // LIKE を作成する処理を実装します。
+  // SQLBoiler を使って、likes テーブルに新しいレコードを挿入します。
+}
+```
+
+これを実装した時点で、静的解析のエラーは解消されるはずです。
+
+次に、既存の `GetMany` および `GetWIthReplies` 関数に、LIKE の情報を取得する処理を追加します。
+これにあたって、まずは変換関数を修正しましょう。
+
+- [ ] `dao/posts.conv.go` について、以下の修正を行なってください。
+
+```go
+// 1. LIKE モデルへ変換する関数を追加する
+func toPostLikeModel(likeDto sqlboiler.Like) (*model.PostLike, error) {
+  // PostLike 構造体に変換する処理を実装します。
+  // User フィールドについては `users.conv.go` の `toUserModel` 関数を使用してください。
+}
+
+// 2. LIKE モデルのスライスを変換する関数を追加する
+func toPostLikeModels(likesDto sqlboiler.LikeSlice) ([]*model.PostLike, error) {
+  // PostLike のスライスに変換する処理を実装します。
+  // 各 LIKE DTO を toPostLikeModel 関数を使って変換してください。
+}
+
+// 3. toPostModel 関数を修正する
+func toPostModel(postDto sqlboiler.Post) (*model.Post, error) {
+  // PostLike を取得する処理を追加します。
+}
+```
+
+変換関数を変更しただけだと、`postDto.R.GetLikes()` はロードされず、`nil` になってしまいます。適切に LIKE の情報を取得するために、Eager Loading を使いましょう。ここでは、Likes を取得するだけでなく、それに関連するユーザー情報も読み込む必要があることに注意してください。
+
+- [ ] 変換関数が実装できたら、Eager Loading を使って、LIKE の情報を取得するように `GetMany` および `GetWithReplies` 関数を修正します。
