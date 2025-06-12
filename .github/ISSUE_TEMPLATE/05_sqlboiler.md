@@ -30,7 +30,7 @@ SELECT * FROM posts WHERE user_id = '01JXCX2QSSEK1Q4M4HWYCAYM7V';
 ```go
 // dao/posts.go
 posts, err := sqlboiler.Posts(
-  sqlboiler.PostWhere.UserID.EQ(query.UserID.String()),
+  sqlboiler.PostWhere.UserID.EQ("01JXCX2QSSEK1Q4M4HWYCAYM7V"),
 ).All(ctx, p.db)
 ```
 
