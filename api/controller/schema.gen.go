@@ -21,9 +21,12 @@ import (
 
 // Post defines model for Post.
 type Post struct {
-	Content   string     `json:"content"`
-	CreatedAt time.Time  `json:"created_at"`
-	Id        string     `json:"id"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
+	Id        string    `json:"id"`
+
+	// Likes List of users who liked the post
+	Likes     []User     `json:"likes"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	UserId    string     `json:"user_id"`
 }
@@ -72,8 +75,16 @@ type UserCreate struct {
 	Username string `json:"username"`
 }
 
+// PostPostsPostIdLikeJSONBody defines parameters for PostPostsPostIdLike.
+type PostPostsPostIdLikeJSONBody struct {
+	UserId string `json:"user_id"`
+}
+
 // PostPostsJSONRequestBody defines body for PostPosts for application/json ContentType.
 type PostPostsJSONRequestBody = PostCreate
+
+// PostPostsPostIdLikeJSONRequestBody defines body for PostPostsPostIdLike for application/json ContentType.
+type PostPostsPostIdLikeJSONRequestBody PostPostsPostIdLikeJSONBody
 
 // PostRepliesJSONRequestBody defines body for PostReplies for application/json ContentType.
 type PostRepliesJSONRequestBody = ReplyCreate
@@ -89,6 +100,9 @@ type ServerInterface interface {
 	// Get a post by ID (include replies)
 	// (GET /posts/{post_id})
 	GetPostsPostId(c *gin.Context, postId string)
+	// Like a post
+	// (POST /posts/{post_id}/like)
+	PostPostsPostIdLike(c *gin.Context, postId string)
 	// Create a reply
 	// (POST /replies)
 	PostReplies(c *gin.Context)
@@ -147,6 +161,30 @@ func (siw *ServerInterfaceWrapper) GetPostsPostId(c *gin.Context) {
 	}
 
 	siw.Handler.GetPostsPostId(c, postId)
+}
+
+// PostPostsPostIdLike operation middleware
+func (siw *ServerInterfaceWrapper) PostPostsPostIdLike(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "post_id" -------------
+	var postId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", c.Param("post_id"), &postId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter post_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PostPostsPostIdLike(c, postId)
 }
 
 // PostReplies operation middleware
@@ -241,6 +279,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/posts", wrapper.PostPosts)
 	router.GET(options.BaseURL+"/posts/:post_id", wrapper.GetPostsPostId)
+	router.POST(options.BaseURL+"/posts/:post_id/like", wrapper.PostPostsPostIdLike)
 	router.POST(options.BaseURL+"/replies", wrapper.PostReplies)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.PostUsers)
@@ -250,20 +289,21 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
